@@ -1,0 +1,9 @@
+CREATE TABLE PlayerInfo(
+	discordID TEXT PRIMARY KEY,
+	score INTEGER NOT NULL,
+	inDuel INTEGER NOT NULL,
+	requestingDuel INTEGER NOT NULL,
+	duelPartner STRING,
+	currentBet INTEGER,
+	nextRoll INTEGER NOT NULL,
+);
