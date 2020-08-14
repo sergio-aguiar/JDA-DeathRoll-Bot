@@ -1,30 +1,52 @@
 package Commands;
 
-import Database.SQLiteConnection;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
-import java.util.Random;
 
+/**
+ * DeathRoll Command: FreeRoll.
+ * <ul>
+ *     <li> Usable by: Any user.
+ *     <li> Alias: Froll.
+ *     <li> Arguments: A numeric value greater than 1 (obligatory).
+ *     <li> Purpose: Roll a random number up to the value of the given argument.
+ * </ul>
+ *
+ * @author Sérgio de Aguiar (pioavenger)
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class FreeRollCommand extends ListenerAdapter
 {
-    private static final Random random = new Random();
-
+    /**
+     * Inherited from ListenerAdapter.
+     *
+     * This implementation handles the FreeRoll command usage and can result in the following:
+     * <ul>
+     *     <li> error, due to incorrect number of arguments;
+     *     <li> error, due to a valid maximum roll value not having been provided;
+     *     <li> success, where the resulting value is displayed.
+     * </ul>
+     *
+     * @param event The JDA event relative to a message having been read by the application in a server channel.
+     */
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event)
     {
         if (!event.getAuthor().isBot())
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
-            EmbedBuilder embedBuilder = new EmbedBuilder();
 
             if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "froll"))
             {
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+
                 if (messageText.length != 2) {
-                    embedBuilder.setColor(0xe50b0e)
+                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                             .setTitle("Incorrect number of arguments!")
                             .setDescription("The 'froll' command takes exactly 1 argument." +
                                     "\nUsage: " + DeathRollMain.getPrefix() + "froll [maximum roll value]");
@@ -34,26 +56,26 @@ public class FreeRollCommand extends ListenerAdapter
                     try {
                         parsed = Integer.parseInt(messageText[1]);
                     } catch (NumberFormatException e) {
-                        embedBuilder.setColor(0xe50b0e)
+                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                 .setTitle("Incorrect argument value!")
                                 .setDescription("The 'froll' command takes exactly 1 argument." +
                                         "\nUsage: " + DeathRollMain.getPrefix() + "froll [maximum roll value]");
                     }
 
                     if (parsed < 2) {
-                        embedBuilder.setColor(0xe50b0e)
+                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                 .setTitle("Incorrect roll value!")
                                 .setDescription("Argument [maximum roll value] must have a value of 2 or greater!");
                     } else {
-                        int rand = random.nextInt(parsed) + 1;
+                        int rand = DeathRollMain.getRandom().nextInt(parsed) + 1;
 
                         if (rand > 1) {
-                            embedBuilder.setColor(0x19ed0e)
+                            embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
                                     .setTitle("Value rolled:")
                                     .setDescription("User " + event.getAuthor().getAsMention()
                                             + " just rolled a " + rand + "!");
                         } else {
-                            embedBuilder.setColor(0x000000)
+                            embedBuilder.setColor(DeathRollMain.EMBED_NEUTRAL)
                                     .setTitle("DEATH ROLL:")
                                     .setDescription("User " + event.getAuthor().getAsMention()
                                             + " just rolled a " + rand + "!");

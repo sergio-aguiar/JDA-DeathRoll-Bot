@@ -6,4 +6,5 @@ CREATE TABLE PlayerInfo(
 	duelPartner STRING,
 	currentBet INTEGER,
 	nextRoll INTEGER NOT NULL,
+	isRollTurn INTEGER NOT NULL
 );
