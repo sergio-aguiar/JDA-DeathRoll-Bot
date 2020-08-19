@@ -22,7 +22,7 @@ import java.awt.*;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class DuelCommand extends ListenerAdapter
@@ -42,7 +42,7 @@ public class DuelCommand extends ListenerAdapter
      *     <li> error, due to the challenged player already being ina  due;
      *     <li> error, due to a valid bet amount not having been provided;
      *     <li> error, due to the calling user's score value being inferior to the provided bet amount;
-     *     <li> error, due to an incorrect embed having been created (please contact the developer);
+     *     <li> error, due to an incorrect embed having been created;
      *     <li> success, where an interactive embed with reacts is displayed and the database updated.
      * </ul>
      *
@@ -179,7 +179,8 @@ public class DuelCommand extends ListenerAdapter
         }
         else
         {
-            if (event.getAuthor().getId().equals("731819691479269426"))
+            if (event.getAuthor().getId().equals("731819691479269426")
+                || event.getAuthor().getId().equals("743881549392511027"))
             {
                 if (event.getMessage().getEmbeds().size() != 1)
                 {

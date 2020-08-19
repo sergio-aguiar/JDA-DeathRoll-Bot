@@ -1,5 +1,6 @@
 package Database;
 
+import Main.DeathRollMain;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import java.util.List;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class SQLiteConnection
@@ -148,7 +149,7 @@ public class SQLiteConnection
 
             preparedStatement.setString(1, discordID);
             // preparedStatement.setInt(2,10000);
-            preparedStatement.setInt(2,1000000);
+            preparedStatement.setInt(2, DeathRollMain.getBaseScore());
             preparedStatement.setInt(3, 0);
             preparedStatement.setInt(4, 0);
             preparedStatement.setInt(5, 0);

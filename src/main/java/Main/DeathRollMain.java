@@ -16,7 +16,7 @@ import java.util.Random;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class DeathRollMain
@@ -25,6 +25,14 @@ public class DeathRollMain
      * The prefix used by the application to recognise commands.
      */
     private static String prefix = "+";
+    /**
+     * The discord bot's token.
+     */
+    private static String token = "";
+    /**
+     * The score value attributed to newly registering players.
+     */
+    private static int baseScore = -1;
     /**
      * Numeric value that represents a shade of Green.
      * Used for successful embed operations.
@@ -56,7 +64,7 @@ public class DeathRollMain
     {
         try
         {
-            JDA jda = JDABuilder.createDefault("<BOT KEY>").build();
+            JDA jda = JDABuilder.createDefault(token).build();
             jda.addEventListener(new DuelCommand());
             jda.addEventListener(new ForfeitCommand());
             jda.addEventListener(new FreeRollCommand());
@@ -93,5 +101,29 @@ public class DeathRollMain
     public static Random getRandom()
     {
         return random;
+    }
+    /**
+     * Set function for the discord bot's token.
+     * @param token The discord bot's token.
+     */
+    public static void setToken(String token)
+    {
+        DeathRollMain.token = token;
+    }
+    /**
+     * Set function for the score value attributed to newly registering players.
+     * @param baseScore The score value attributed to newly registering players.
+     */
+    public static void setBaseScore(int baseScore)
+    {
+        DeathRollMain.baseScore = baseScore;
+    }
+    /**
+     * Get function for the score value attributed to newly registering players.
+     * @return The score value attributed to newly registering players.
+     */
+    public static int getBaseScore()
+    {
+        return baseScore;
     }
 }

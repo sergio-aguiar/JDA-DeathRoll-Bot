@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Forms.StartForm">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="15" left="15" bottom="15" right="15"/>
+    <constraints>
+      <xy x="20" y="20" width="299" height="134"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="65581" class="javax.swing.JTextField" binding="tokenTextField">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="30"/>
+            <preferred-size width="200" height="30"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="81237" class="javax.swing.JButton" binding="RunButton">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Run"/>
+        </properties>
+      </component>
+      <component id="8a474" class="javax.swing.JTextField" binding="scoreTextField">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="30"/>
+            <preferred-size width="200" height="30"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="3aa7d" class="javax.swing.JLabel" binding="tokenLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="35" height="16"/>
+          </grid>
+        </constraints>
+        <properties>
+          <labelFor value="65581"/>
+          <text value="Discord Bot Token"/>
+        </properties>
+      </component>
+      <component id="b4086" class="javax.swing.JLabel" binding="scoreLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="35" height="16"/>
+          </grid>
+        </constraints>
+        <properties>
+          <labelFor value="8a474"/>
+          <text value="New Member Score"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
