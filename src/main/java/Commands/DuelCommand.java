@@ -22,7 +22,7 @@ import java.awt.*;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.0
+ * @version 1.1.1
  * @since 1.0.0
  */
 public class DuelCommand extends ListenerAdapter

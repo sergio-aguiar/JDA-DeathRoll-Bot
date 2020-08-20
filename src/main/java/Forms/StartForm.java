@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.0
+ * @version 1.1.1
  * @since 1.1.0
  */
 public class StartForm extends JFrame
@@ -46,6 +46,10 @@ public class StartForm extends JFrame
      */
     private JButton RunButton;
     /**
+     * Variable that states whether the application has been started or not.
+     */
+    private boolean started = false;
+    /**
      * Class Constructor: StartForm.
      * @param title The form's window title.
      */
@@ -66,8 +70,8 @@ public class StartForm extends JFrame
         {
             public void actionPerformed(ActionEvent e)
             {
-                if (tokenTextField.getText() != null && !tokenTextField.getText().equals("")
-                    && scoreTextField.getText() != null && !scoreTextField.getText().equals(""))
+                if (!started && tokenTextField.getText() != null && !tokenTextField.getText().equals("")
+                        && scoreTextField.getText() != null && !scoreTextField.getText().equals(""))
                 {
                     int baseScore = -1;
                     try
@@ -83,6 +87,7 @@ public class StartForm extends JFrame
                         DeathRollMain.setToken(tokenTextField.getText());
                         DeathRollMain.setBaseScore(baseScore);
                         DeathRollMain.main(new String[0]);
+                        started = true;
                         setVisible(false);
                     }
                     else
