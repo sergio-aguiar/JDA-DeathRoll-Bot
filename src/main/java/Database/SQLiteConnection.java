@@ -20,7 +20,7 @@ import java.util.List;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.0.0
  */
 public class SQLiteConnection

@@ -12,13 +12,13 @@ import javax.annotation.Nonnull;
  * DeathRoll Command: Score.
  * <ul>
  *     <li> Usable by: Registered users.
- *     <li> Alias: Score.
+ *     <li> Alias: Score, sc.
  *     <li> Arguments: None.
  *     <li> Purpose: Returns the score value for the user who used the command.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.0.0
  */
 public class ScoreCommand extends ListenerAdapter
@@ -43,7 +43,8 @@ public class ScoreCommand extends ListenerAdapter
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
             EmbedBuilder embedBuilder = new EmbedBuilder();
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "score"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "score")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "sc"))
             {
                 if(messageText.length != 1)
                 {

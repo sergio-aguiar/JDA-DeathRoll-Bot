@@ -12,13 +12,13 @@ import javax.annotation.Nonnull;
  * DeathRoll Command: Register.
  * <ul>
  *     <li> Usable by: Non-registered users.
- *     <li> Alias: Register.
+ *     <li> Alias: Register, reg, r.
  *     <li> Arguments: None.
  *     <li> Purpose: Registers the user to the database and grants permission to the usage of various commands.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.0.0
  */
 public class RegisterCommand extends ListenerAdapter
@@ -43,7 +43,9 @@ public class RegisterCommand extends ListenerAdapter
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "register"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "register")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "reg")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "r"))
             {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
 

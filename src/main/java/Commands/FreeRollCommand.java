@@ -11,13 +11,13 @@ import javax.annotation.Nonnull;
  * DeathRoll Command: FreeRoll.
  * <ul>
  *     <li> Usable by: Any user.
- *     <li> Alias: Froll.
+ *     <li> Alias: Froll, fr.
  *     <li> Arguments: A numeric value greater than 1 (obligatory).
  *     <li> Purpose: Roll a random number up to the value of the given argument.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.0.0
  */
 public class FreeRollCommand extends ListenerAdapter
@@ -41,7 +41,8 @@ public class FreeRollCommand extends ListenerAdapter
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "froll"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "froll")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "fr"))
             {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
 

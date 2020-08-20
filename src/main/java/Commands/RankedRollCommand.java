@@ -12,13 +12,13 @@ import javax.annotation.Nonnull;
  * DeathRoll Command: RankedRoll.
  * <ul>
  *     <li> Usable by: Registered users who are currently in a duel, given it is their turn to do so.
- *     <li> Alias: Roll.
+ *     <li> Alias: Roll, rr.
  *     <li> Arguments: None.
  *     <li> Purpose: Roll a random number up to the previously rolled value (or to 10x the bid value if the first roll).
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.0.0
  */
 public class RankedRollCommand extends ListenerAdapter
@@ -45,7 +45,8 @@ public class RankedRollCommand extends ListenerAdapter
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "roll"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "roll")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "rr"))
             {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
 

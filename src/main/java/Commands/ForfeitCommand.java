@@ -17,13 +17,13 @@ import java.awt.*;
  * DeathRoll Command: Forfeit.
  * <ul>
  *     <li> Usable by: Registered users who are currently in a duel.
- *     <li> Alias: Forfeit.
+ *     <li> Alias: Forfeit, df, f.
  *     <li> Arguments: None.
  *     <li> Purpose: Force the currently ongoing duel to end in a loss for the command user.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.0.0
  */
 public class ForfeitCommand extends ListenerAdapter
@@ -50,7 +50,9 @@ public class ForfeitCommand extends ListenerAdapter
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
             EmbedBuilder embedBuilder = new EmbedBuilder();
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "forfeit"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "forfeit")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "df")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "f"))
             {
                 if (messageText.length != 1)
                 {

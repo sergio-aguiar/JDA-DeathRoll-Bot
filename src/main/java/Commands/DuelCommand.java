@@ -16,13 +16,13 @@ import java.awt.*;
  * DeathRoll Command: Duel.
  * <ul>
  *     <li> Usable by: Registered users.
- *     <li> Alias: Duel.
+ *     <li> Alias: Duel, d.
  *     <li> Arguments: A user mention (obligatory), a positive numeric bet value (obligatory).
  *     <li> Purpose: Challenge another user to a ranked duel.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.0.0
  */
 public class DuelCommand extends ListenerAdapter
@@ -55,7 +55,8 @@ public class DuelCommand extends ListenerAdapter
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "duel"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "duel")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "d"))
             {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
 

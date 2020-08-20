@@ -11,24 +11,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * DeathRoll Command: Leaderboard.
+ * DeathRoll Command: Scoreboard.
  * <ul>
  *     <li> Usable by: Any user.
- *     <li> Alias: Leaderboard.
+ *     <li> Alias: Scoreboard, leaderboard, scb, ldb.
  *     <li> Arguments: None.
  *     <li> Purpose: Displays the top 10 users by (descending) score value.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.0.0
  */
-public class LeaderboardCommand extends ListenerAdapter
+public class ScoreBoardCommand extends ListenerAdapter
 {
     /**
      * Inherited from ListenerAdapter.
      *
-     * This implementation handles the Leaderboard command usage and can result in the following:
+     * This implementation handles the Scoreboard command usage and can result in the following:
      * <ul>
      *     <li> error, due to incorrect number of arguments;
      *     <li> success, where the resulting values are displayed.
@@ -43,7 +43,10 @@ public class LeaderboardCommand extends ListenerAdapter
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "leaderboard"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "scoreboard")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "leaderboard")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "scb")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "ldb"))
             {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
 
@@ -51,21 +54,21 @@ public class LeaderboardCommand extends ListenerAdapter
                 {
                     embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                             .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'leaderboard' command takes no arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "leaderboard");
+                            .setDescription("The 'scoreboard' command takes no arguments." +
+                                    "\nUsage: " + DeathRollMain.getPrefix() + "scoreboard");
                 }
                 else
                 {
                     List<UserScore> userScoreList = SQLiteConnection.getScoreLeaderboard();
-                    embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS).setTitle("Top 10 Leaderboard");
+                    embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS).setTitle("Top 10 Scoreboard");
 
-                    StringBuilder leaderboard = new StringBuilder();
+                    StringBuilder scoreboard = new StringBuilder();
                     for (UserScore score : userScoreList)
                     {
-                        leaderboard.append(event.getJDA().retrieveUserById(score.getUserID()).complete().getAsMention())
+                        scoreboard.append(event.getJDA().retrieveUserById(score.getUserID()).complete().getAsMention())
                                 .append(" - ").append(score.getScore()).append("\n");
                     }
-                    embedBuilder.setDescription(leaderboard.toString());
+                    embedBuilder.setDescription(scoreboard.toString());
                     event.getChannel().sendMessage(embedBuilder.build()).queue();
                 }
             }

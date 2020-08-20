@@ -12,13 +12,13 @@ import javax.annotation.Nonnull;
  * DeathRoll Command: Shutdown.
  * <ul>
  *     <li> Usable by: Bot Administrators.
- *     <li> Alias: Shutdown.
+ *     <li> Alias: Shutdown, sd.
  *     <li> Arguments: None.
  *     <li> Purpose: Shut the application down.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.0.0
  */
 public class ShutDownCommand extends ListenerAdapter
@@ -41,7 +41,8 @@ public class ShutDownCommand extends ListenerAdapter
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
             EmbedBuilder embedBuilder = new EmbedBuilder();
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "shutdown"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "shutdown")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "sd"))
             {
                 if (messageText.length != 1) {
                     embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)

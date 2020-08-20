@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.1
+ * @version 1.1.2
  * @since 1.1.0
  */
 public class StartForm extends JFrame
