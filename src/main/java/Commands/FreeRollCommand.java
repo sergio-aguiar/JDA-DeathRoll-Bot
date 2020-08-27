@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.2
+ * @version 1.2.0
  * @since 1.0.0
  */
 public class FreeRollCommand extends ListenerAdapter

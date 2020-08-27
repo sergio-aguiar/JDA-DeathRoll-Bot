@@ -20,7 +20,7 @@ import java.util.List;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.2
+ * @version 1.2.0
  * @since 1.0.0
  */
 public class SQLiteConnection
@@ -201,7 +201,7 @@ public class SQLiteConnection
      */
     public static List<UserScore> getScoreLeaderboard()
     {
-        List<UserScore> result = new ArrayList<UserScore>();
+        List<UserScore> result = new ArrayList<>();
         Connection conn;
         try
         {

@@ -16,7 +16,7 @@ import java.util.Random;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.1.2
+ * @version 1.2.0
  * @since 1.0.0
  */
 public class DeathRollMain
@@ -68,6 +68,7 @@ public class DeathRollMain
             jda.addEventListener(new DuelCommand());
             jda.addEventListener(new ForfeitCommand());
             jda.addEventListener(new FreeRollCommand());
+            jda.addEventListener(new HelpCommand());
             jda.addEventListener(new RankedRollCommand());
             jda.addEventListener(new RegisterCommand());
             jda.addEventListener(new ScoreBoardCommand());
