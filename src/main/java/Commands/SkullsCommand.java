@@ -9,24 +9,24 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 
 /**
- * DeathRoll Command: Score.
+ * DeathRoll Command: Skulls.
  * <ul>
  *     <li> Usable by: Registered users.
- *     <li> Alias: Score, sc.
+ *     <li> Alias: Skulls, sk.
  *     <li> Arguments: None.
- *     <li> Purpose: Returns the score value for the user who used the command.
+ *     <li> Purpose: Returns the skulls value for the user who used the command.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
  * @version 1.2.0
  * @since 1.0.0
  */
-public class ScoreCommand extends ListenerAdapter
+public class SkullsCommand extends ListenerAdapter
 {
     /**
      * Inherited from ListenerAdapter.
      *
-     * This implementation handles the Score command usage and can result in the following:
+     * This implementation handles the Skulls command usage and can result in the following:
      * <ul>
      *     <li> error, due to incorrect number of arguments;
      *     <li> error, due to the calling user not being registered;
@@ -43,32 +43,32 @@ public class ScoreCommand extends ListenerAdapter
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
             EmbedBuilder embedBuilder = new EmbedBuilder();
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "score")
-                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "sc"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "skulls")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "sk"))
             {
                 if(messageText.length != 1)
                 {
                     embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                             .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'score' command takes no arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "score");
+                            .setDescription("The 'skulls' command takes no arguments." +
+                                    "\nUsage: " + DeathRollMain.getPrefix() + "skulls");
                 }
                 else
                 {
                     if (SQLiteConnection.isUserRegistered(event.getAuthor().getId()))
                     {
-                        int userScore = SQLiteConnection.getUserScore(event.getAuthor().getId());
+                        int userSkulls = SQLiteConnection.getUserSkulls(event.getAuthor().getId());
 
                         embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                .setTitle("Current Score:")
-                                .setDescription("User " + event.getAuthor().getAsMention() + " has a current score" +
-                                        " of " + userScore + ".");
+                                .setTitle("Current Skulls:")
+                                .setDescription("User " + event.getAuthor().getAsMention() + " has " + userSkulls +
+                                        " skulls.");
                     }
                     else
                     {
                         embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                 .setTitle("User not registered!")
-                                .setDescription("To use the 'score' command, you must be registered." +
+                                .setDescription("To use the 'skulls' command, you must be registered." +
                                         "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
                     }
                 }

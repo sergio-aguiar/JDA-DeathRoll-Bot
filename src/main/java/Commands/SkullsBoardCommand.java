@@ -1,7 +1,7 @@
 package Commands;
 
 import Database.SQLiteConnection;
-import Database.UserScore;
+import Database.UserSkulls;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -11,24 +11,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * DeathRoll Command: Scoreboard.
+ * DeathRoll Command: SkullBoard.
  * <ul>
  *     <li> Usable by: Any user.
- *     <li> Alias: Scoreboard, leaderboard, scb, ldb.
+ *     <li> Alias: SkullBoard, leaderboard, skb, ldb.
  *     <li> Arguments: None.
- *     <li> Purpose: Displays the top 10 users by (descending) score value.
+ *     <li> Purpose: Displays the top 10 users by (descending) skulls value.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
  * @version 1.2.0
  * @since 1.0.0
  */
-public class ScoreBoardCommand extends ListenerAdapter
+public class SkullsBoardCommand extends ListenerAdapter
 {
     /**
      * Inherited from ListenerAdapter.
      *
-     * This implementation handles the Scoreboard command usage and can result in the following:
+     * This implementation handles the SkullsBoard command usage and can result in the following:
      * <ul>
      *     <li> error, due to incorrect number of arguments;
      *     <li> success, where the resulting values are displayed.
@@ -43,9 +43,9 @@ public class ScoreBoardCommand extends ListenerAdapter
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "scoreboard")
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "skullsboard")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "leaderboard")
-                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "scb")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "skb")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "ldb"))
             {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -54,21 +54,21 @@ public class ScoreBoardCommand extends ListenerAdapter
                 {
                     embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                             .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'scoreboard' command takes no arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "scoreboard");
+                            .setDescription("The 'skullsboard' command takes no arguments." +
+                                    "\nUsage: " + DeathRollMain.getPrefix() + "skullsboard");
                 }
                 else
                 {
-                    List<UserScore> userScoreList = SQLiteConnection.getScoreLeaderboard();
-                    embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS).setTitle("Top 10 Scoreboard");
+                    List<UserSkulls> userSkullsList = SQLiteConnection.getSkullsLeaderboard();
+                    embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS).setTitle("Top 10 SkullsBoard");
 
-                    StringBuilder scoreboard = new StringBuilder();
-                    for (UserScore score : userScoreList)
+                    StringBuilder skullsboard = new StringBuilder();
+                    for (UserSkulls skulls : userSkullsList)
                     {
-                        scoreboard.append(event.getJDA().retrieveUserById(score.getUserID()).complete().getAsMention())
-                                .append(" - ").append(score.getScore()).append("\n");
+                        skullsboard.append(event.getJDA().retrieveUserById(skulls.getUserID()).complete().getAsMention())
+                                .append(" - ").append(skulls.getSkulls()).append("\n");
                     }
-                    embedBuilder.setDescription(scoreboard.toString());
+                    embedBuilder.setDescription(skullsboard.toString());
                     event.getChannel().sendMessage(embedBuilder.build()).queue();
                 }
             }

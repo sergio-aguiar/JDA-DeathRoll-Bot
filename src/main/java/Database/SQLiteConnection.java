@@ -75,7 +75,7 @@ public class SQLiteConnection
 
             statement.execute("CREATE TABLE IF NOT EXISTS PlayerInfo(" +
                     "discordID TEXT PRIMARY KEY," +
-                    "score INTEGER NOT NULL," +
+                    "skulls INTEGER NOT NULL," +
                     "inDuel INTEGER NOT NULL," +
                     "requestingDuel INTEGER NOT NULL," +
                     "duelPartner STRING," +
@@ -144,12 +144,11 @@ public class SQLiteConnection
         {
             conn = getConnection();
 
-            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO PlayerInfo(discordID, score," +
-                    " inDuel, requestingDuel, currentBet, nextRoll, isRollTurn) VALUES(?,?,?,?,?,?,?);");
+            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO PlayerInfo(discordID, skulls" +
+                    ", inDuel, requestingDuel, currentBet, nextRoll, isRollTurn) VALUES(?,?,?,?,?,?,?);");
 
             preparedStatement.setString(1, discordID);
-            // preparedStatement.setInt(2,10000);
-            preparedStatement.setInt(2, DeathRollMain.getBaseScore());
+            preparedStatement.setInt(2, DeathRollMain.getBaseSkulls());
             preparedStatement.setInt(3, 0);
             preparedStatement.setInt(4, 0);
             preparedStatement.setInt(5, 0);
@@ -167,11 +166,11 @@ public class SQLiteConnection
         return result;
     }
     /**
-     * Get function for a user's score.
+     * Get function for a user's skulls.
      * @param discordID The user's discord ID.
-     * @return The given user's score value.
+     * @return The given user's skulls value.
      */
-    public static int getUserScore(String discordID)
+    public static int getUserSkulls(String discordID)
     {
         int result = -1;
         Connection conn;
@@ -179,13 +178,13 @@ public class SQLiteConnection
         {
             conn = getConnection();
 
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT score FROM PlayerInfo WHERE " +
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT skulls FROM PlayerInfo WHERE " +
                     "discordID=?;");
 
             preparedStatement.setString(1, discordID);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) result = resultSet.getInt("score");
+            if (resultSet.next()) result = resultSet.getInt("skulls");
 
             conn.close();
         }
@@ -196,27 +195,27 @@ public class SQLiteConnection
         return result;
     }
     /**
-     * Get function for the top users by score.
-     * @return A list with the top users by score, up to a maximum of 10.
+     * Get function for the top users by skulls.
+     * @return A list with the top users by skulls, up to a maximum of 10.
      */
-    public static List<UserScore> getScoreLeaderboard()
+    public static List<UserSkulls> getSkullsLeaderboard()
     {
-        List<UserScore> result = new ArrayList<>();
+        List<UserSkulls> result = new ArrayList<>();
         Connection conn;
         try
         {
             conn = getConnection();
 
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT discordID, score FROM PlayerInfo " +
-                    "ORDER BY score DESC LIMIT 10;");
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT discordID, skulls FROM PlayerInfo" +
+                    " ORDER BY skulls DESC LIMIT 10;");
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next())
             {
-                result.add(new UserScore(
+                result.add(new UserSkulls(
                         resultSet.getString("discordID"),
-                        resultSet.getInt("score"))
+                        resultSet.getInt("skulls"))
                 );
             }
             conn.close();
@@ -228,21 +227,21 @@ public class SQLiteConnection
         return result;
     }
     /**
-     * Set function for a user's score.
+     * Set function for a user's skulls.
      * @param discordID The user's discord ID.
-     * @param score The user's new score value.
+     * @param skulls The user's new skulls value.
      */
-    public static void setUserScore(String discordID, int score)
+    public static void setUserSkulls(String discordID, int skulls)
     {
         Connection conn;
         try
         {
             conn = getConnection();
 
-            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE PlayerInfo SET score = ? " +
+            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE PlayerInfo SET skulls = ? " +
                     "WHERE discordID = ?;");
 
-            preparedStatement.setInt(1, score);
+            preparedStatement.setInt(1, skulls);
             preparedStatement.setString(2, discordID);
             preparedStatement.executeUpdate();
 

@@ -102,12 +102,12 @@ public class RankedRollCommand extends ListenerAdapter
                                         int currentBet = SQLiteConnection.getCurrentBet(event.getAuthor().getId());
                                         String duelPartner = SQLiteConnection.getDuelPartner(event.getAuthor().getId());
 
-                                        int userScore = SQLiteConnection.getUserScore(event.getAuthor().getId());
-                                        int opponentScore = SQLiteConnection.getUserScore(duelPartner);
+                                        int userSkulls = SQLiteConnection.getUserSkulls(event.getAuthor().getId());
+                                        int opponentSkulls = SQLiteConnection.getUserSkulls(duelPartner);
 
-                                        SQLiteConnection.setUserScore(event.getAuthor().getId(), userScore
+                                        SQLiteConnection.setUserSkulls(event.getAuthor().getId(), userSkulls
                                                 - currentBet);
-                                        SQLiteConnection.setUserScore(duelPartner, opponentScore + currentBet);
+                                        SQLiteConnection.setUserSkulls(duelPartner, opponentSkulls + currentBet);
 
                                         SQLiteConnection.setNextRoll(event.getAuthor().getId(), 0);
                                         SQLiteConnection.setNextRoll(duelPartner, 0);

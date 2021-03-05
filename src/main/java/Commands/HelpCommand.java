@@ -106,21 +106,21 @@ public class HelpCommand extends ListenerAdapter
                                     + "Aliases: Register, reg, r.\n"
                                     + "Usage: " + DeathRollMain.getPrefix() + "register");
                             break;
-                        case "scoreboard":
+                        case "skullsboard":
                         case "leaderboard":
-                        case "scb":
+                        case "skb":
                         case "ldb":
-                            embedBuilder.setTitle("Scoreboard Command:");
-                            embedBuilder.setDescription("Displays the top 10 users by (descending) score value.\n\n"
-                                    + "Aliases: Scoreboard, leaderboard, scb, ldb.\n"
-                                    + "Usage: " + DeathRollMain.getPrefix() + "scoreboard");
+                            embedBuilder.setTitle("SkullsBoard Command:");
+                            embedBuilder.setDescription("Displays the top 10 users by (descending) skulls value.\n\n"
+                                    + "Aliases: SkullsBoard, leaderboard, skb, ldb.\n"
+                                    + "Usage: " + DeathRollMain.getPrefix() + "skullsboard");
                             break;
-                        case "score":
-                        case "sc":
-                            embedBuilder.setTitle("Score Command:");
-                            embedBuilder.setDescription("Returns the score value for the user who used the command.\n\n"
-                                    + "Aliases: Score, sc.\n"
-                                    + "Usage: " + DeathRollMain.getPrefix() + "score");
+                        case "skulls":
+                        case "sk":
+                            embedBuilder.setTitle("Skulls Command:");
+                            embedBuilder.setDescription("Returns the skulls value for the user who used the command.\n\n"
+                                    + "Aliases: Skulls, sk.\n"
+                                    + "Usage: " + DeathRollMain.getPrefix() + "skulls");
                             break;
                         case "shutdown":
                         case "sd":

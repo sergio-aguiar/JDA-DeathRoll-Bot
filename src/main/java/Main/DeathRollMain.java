@@ -30,9 +30,9 @@ public class DeathRollMain
      */
     private static String token = "";
     /**
-     * The score value attributed to newly registering players.
+     * The skulls value attributed to newly registering players.
      */
-    private static int baseScore = -1;
+    private static int baseSkulls = -1;
     /**
      * Numeric value that represents a shade of Green.
      * Used for successful embed operations.
@@ -71,8 +71,8 @@ public class DeathRollMain
             jda.addEventListener(new HelpCommand());
             jda.addEventListener(new RankedRollCommand());
             jda.addEventListener(new RegisterCommand());
-            jda.addEventListener(new ScoreBoardCommand());
-            jda.addEventListener(new ScoreCommand());
+            jda.addEventListener(new SkullsBoardCommand());
+            jda.addEventListener(new SkullsCommand());
             jda.addEventListener(new ShutDownCommand());
             jda.awaitReady();
         }
@@ -112,19 +112,19 @@ public class DeathRollMain
         DeathRollMain.token = token;
     }
     /**
-     * Set function for the score value attributed to newly registering players.
-     * @param baseScore The score value attributed to newly registering players.
+     * Set function for the skulls value attributed to newly registering players.
+     * @param baseSkulls The skulls value attributed to newly registering players.
      */
-    public static void setBaseScore(int baseScore)
+    public static void setBaseSkulls(int baseSkulls)
     {
-        DeathRollMain.baseScore = baseScore;
+        DeathRollMain.baseSkulls = baseSkulls;
     }
     /**
-     * Get function for the score value attributed to newly registering players.
-     * @return The score value attributed to newly registering players.
+     * Get function for the skulls value attributed to newly registering players.
+     * @return The skulls value attributed to newly registering players.
      */
-    public static int getBaseScore()
+    public static int getBaseSkulls()
     {
-        return baseScore;
+        return baseSkulls;
     }
 }

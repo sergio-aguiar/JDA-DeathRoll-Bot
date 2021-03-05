@@ -1,7 +1,7 @@
 package Database;
 
 /**
- * Database: UserScore.
+ * Database: UserSkulls.
  * <ul>
  *     <li> An internal class responsible for organizing user data when returning for leaderboard command usage.
  * </ul>
@@ -10,38 +10,38 @@ package Database;
  * @version 1.2.0
  * @since 1.0.0
  */
-public class UserScore
+public class UserSkulls
 {
     /**
      * The user's discord ID.
      */
     private final String userID;
     /**
-     * The user's score value.
+     * The user's skulls value.
      */
-    private final int score;
+    private final int skulls;
     /**
-     * Class Constructor: UserScore.
+     * Class Constructor: UserSkulls.
      * @param userID The user's discord ID.
-     * @param score The user's score value.
+     * @param skulls The user's skulls value.
      */
-    public UserScore(String userID, int score)
+    public UserSkulls(String userID, int skulls)
     {
         this.userID = userID;
-        this.score = score;
+        this.skulls = skulls;
     }
     /**
      * Get function for the user's discord ID.
      * @return The user's discord ID.
      */
     public String getUserID() {
-        return userID;
+        return this.userID;
     }
     /**
-     * Get function for the user's score value.
-     * @return The user's score value.
+     * Get function for the user's skulls value.
+     * @return The user's skulls value.
      */
-    public int getScore() {
-        return score;
+    public int getSkulls() {
+        return this.skulls;
     }
 }

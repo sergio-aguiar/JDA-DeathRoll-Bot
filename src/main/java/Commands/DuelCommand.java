@@ -41,7 +41,7 @@ public class DuelCommand extends ListenerAdapter
      *     <li> error, due to the challenged player being the same as the command caller;
      *     <li> error, due to the challenged player already being ina  due;
      *     <li> error, due to a valid bet amount not having been provided;
-     *     <li> error, due to the calling user's score value being inferior to the provided bet amount;
+     *     <li> error, due to the calling user's skulls value being inferior to the provided bet amount;
      *     <li> error, due to an incorrect embed having been created;
      *     <li> success, where an interactive embed with reacts is displayed and the database updated.
      * </ul>
@@ -133,14 +133,14 @@ public class DuelCommand extends ListenerAdapter
                                         }
                                         else
                                         {
-                                            int userScore = SQLiteConnection.getUserScore(event.getAuthor().getId());
+                                            int userSkulls = SQLiteConnection.getUserSkulls(event.getAuthor().getId());
 
-                                            if (parsed > userScore)
+                                            if (parsed > userSkulls)
                                             {
                                                 embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                                        .setTitle("Not enough score to bet!")
+                                                        .setTitle("Not enough skulls to bet!")
                                                         .setDescription("User " + event.getAuthor().getAsMention()
-                                                                + " currently has a score of " + userScore + ".");
+                                                                + " currently has " + userSkulls + " skulls.");
                                             }
                                             else
                                             {
@@ -215,7 +215,7 @@ public class DuelCommand extends ListenerAdapter
      *     <li> error, due to being unable to fetch the embed's color (please contact the developer);
      *     <li> error, due to the reacting user not being registered;
      *     <li> error, due to a valid bet amount not being found in the embed (please contact the developer);
-     *     <li> error, due to the reacting user's score value being inferior to the found bet amount;
+     *     <li> error, due to the reacting user's skulls value being inferior to the found bet amount;
      *     <li> error, due to the reacting user already being in a duel;
      *     <li> success when accepted, where the database is updated to reflect the fact that the duel is now underway;
      *     <li> success when declined, where the database is updated to its prior state for the challenging user.
@@ -286,13 +286,13 @@ public class DuelCommand extends ListenerAdapter
 
                                 if (parsedBet >= 0)
                                 {
-                                    int userScore = SQLiteConnection.getUserScore(event.getUserId());
-                                    if (userScore < parsedBet)
+                                    int useruserSkulls = SQLiteConnection.getUserSkulls(event.getUserId());
+                                    if (useruserSkulls < parsedBet)
                                     {
                                         embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                                .setTitle("Not enough score to accept duel!")
+                                                .setTitle("Not enough skulls to accept duel!")
                                                 .setDescription("User " + event.getUser().getAsMention()
-                                                        + " currently has a score of " + userScore + ".");
+                                                        + " currently has " + useruserSkulls + " skulls.");
 
                                         SQLiteConnection.setUserRequestingDuelState(challenging, 0);
                                         event.getChannel().sendMessage(embedBuilder.build()).queue();

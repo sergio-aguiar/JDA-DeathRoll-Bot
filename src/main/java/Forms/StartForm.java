@@ -34,13 +34,13 @@ public class StartForm extends JFrame
      */
     private JLabel tokenLabel;
     /**
-     * The form's text field relative to the score value attributed to newly registering players.
+     * The form's text field relative to the skulls value attributed to newly registering players.
      */
-    private JTextField scoreTextField;
+    private JTextField skullsTextField;
     /**
-     * The form's label relative to the "score value attributed to newly registering" players text field.
+     * The form's label relative to the "skulls value attributed to newly registering" players text field.
      */
-    private JLabel scoreLabel;
+    private JLabel skullsLabel;
     /**
      * The form's run button.
      */
@@ -62,37 +62,37 @@ public class StartForm extends JFrame
         this.pack();
 
         tokenLabel.setFont(new Font(tokenLabel.getFont().getName(), Font.BOLD, 16));
-        scoreLabel.setFont(tokenLabel.getFont());
+        skullsLabel.setFont(tokenLabel.getFont());
         tokenTextField.setFont(new Font(tokenLabel.getFont().getName(), Font.PLAIN, 16));
-        scoreTextField.setFont(tokenTextField.getFont());
+        skullsTextField.setFont(tokenTextField.getFont());
 
         RunButton.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 if (!started && tokenTextField.getText() != null && !tokenTextField.getText().equals("")
-                        && scoreTextField.getText() != null && !scoreTextField.getText().equals(""))
+                        && skullsTextField.getText() != null && !skullsTextField.getText().equals(""))
                 {
-                    int baseScore = -1;
+                    int baseSkulls = -1;
                     try
                     {
-                        baseScore = Integer.parseInt(scoreTextField.getText());
+                        baseSkulls = Integer.parseInt(skullsTextField.getText());
                     } catch (Exception ex)
                     {
                         ex.printStackTrace();
                     }
 
-                    if (baseScore > 0)
+                    if (baseSkulls >= 0)
                     {
                         DeathRollMain.setToken(tokenTextField.getText());
-                        DeathRollMain.setBaseScore(baseScore);
+                        DeathRollMain.setBaseSkulls(baseSkulls);
                         DeathRollMain.main(new String[0]);
                         started = true;
                         setVisible(false);
                     }
                     else
                     {
-                        JOptionPane.showMessageDialog(null, "Invalid Score Value.");
+                        JOptionPane.showMessageDialog(null, "Invalid Skulls Value.");
                     }
                 }
             }

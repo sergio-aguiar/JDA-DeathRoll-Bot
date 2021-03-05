@@ -173,11 +173,11 @@ public class ForfeitCommand extends ListenerAdapter
                                     int currentBet = SQLiteConnection.getCurrentBet(event.getUser().getId());
                                     String duelPartner = SQLiteConnection.getDuelPartner(event.getUser().getId());
 
-                                    int userScore = SQLiteConnection.getUserScore(event.getUser().getId());
-                                    int opponentScore = SQLiteConnection.getUserScore(duelPartner);
+                                    int userSkulls = SQLiteConnection.getUserSkulls(event.getUser().getId());
+                                    int opponentSkulls = SQLiteConnection.getUserSkulls(duelPartner);
 
-                                    SQLiteConnection.setUserScore(event.getUser().getId(), userScore - currentBet);
-                                    SQLiteConnection.setUserScore(duelPartner, opponentScore + currentBet);
+                                    SQLiteConnection.setUserSkulls(event.getUser().getId(), userSkulls - currentBet);
+                                    SQLiteConnection.setUserSkulls(duelPartner, opponentSkulls + currentBet);
 
                                     SQLiteConnection.setNextRoll(event.getUser().getId(), 0);
                                     SQLiteConnection.setNextRoll(duelPartner, 0);
