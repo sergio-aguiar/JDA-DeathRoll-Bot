@@ -286,13 +286,13 @@ public class DuelCommand extends ListenerAdapter
 
                                 if (parsedBet >= 0)
                                 {
-                                    int useruserSkulls = SQLiteConnection.getUserSkulls(event.getUserId());
-                                    if (useruserSkulls < parsedBet)
+                                    int userSkulls = SQLiteConnection.getUserSkulls(event.getUserId());
+                                    if (userSkulls < parsedBet)
                                     {
                                         embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                                 .setTitle("Not enough skulls to accept duel!")
                                                 .setDescription("User " + event.getUser().getAsMention()
-                                                        + " currently has " + useruserSkulls + " skulls.");
+                                                        + " currently has " + userSkulls + " skulls.");
 
                                         SQLiteConnection.setUserRequestingDuelState(challenging, 0);
                                         event.getChannel().sendMessage(embedBuilder.build()).queue();

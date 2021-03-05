@@ -81,7 +81,12 @@ public class SQLiteConnection
                     "duelPartner STRING," +
                     "currentBet INTEGER NOT NULL," +
                     "nextRoll INTEGER NOT NULL," +
-                    "isRollTurn INTEGER NOT NULL" +
+                    "isRollTurn INTEGER NOT NULL," +
+                    "wins INTEGER NOT NULL," +
+                    "losses INTEGER NOT NULL," +
+                    "skullsWon INTEGER NOT NULL," +
+                    "skullsLost INTEGER NOT NULL," +
+                    "isAdmin INTEGER NOT NULL" +
                     ");");
         }
         catch (SQLException e)
@@ -145,7 +150,8 @@ public class SQLiteConnection
             conn = getConnection();
 
             PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO PlayerInfo(discordID, skulls" +
-                    ", inDuel, requestingDuel, currentBet, nextRoll, isRollTurn) VALUES(?,?,?,?,?,?,?);");
+                    ", inDuel, requestingDuel, currentBet, nextRoll, isRollTurn, wins, losses, skullsWon, skullsLost," +
+                    " isAdmin) VALUES(?,?,?,?,?,?,?,?,?,?,?,?);");
 
             preparedStatement.setString(1, discordID);
             preparedStatement.setInt(2, DeathRollMain.getBaseSkulls());
@@ -154,6 +160,11 @@ public class SQLiteConnection
             preparedStatement.setInt(5, 0);
             preparedStatement.setInt(6, 0);
             preparedStatement.setInt(7, 0);
+            preparedStatement.setInt(8, 0);
+            preparedStatement.setInt(9, 0);
+            preparedStatement.setInt(10, 0);
+            preparedStatement.setInt(11, 0);
+            preparedStatement.setInt(12, 0);
             preparedStatement.execute();
             result = true;
 
@@ -594,5 +605,154 @@ public class SQLiteConnection
         {
             e.printStackTrace();
         }
+    }
+
+    public static UserStats getUserWins(String discordID)
+    {
+        UserStats result = null;
+        Connection conn;
+        try
+        {
+            conn = getConnection();
+
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT wins, skullsWon FROM PlayerInfo WHERE" +
+                    " discordID=?;");
+
+            preparedStatement.setString(1, discordID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next())
+            {
+                result = new UserStats(resultSet.getInt("wins"), resultSet.getInt("skullsWon"), true);
+            }
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static UserStats getUserLosses(String discordID)
+    {
+        UserStats result = null;
+        Connection conn;
+        try
+        {
+            conn = getConnection();
+
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT losses, skullsLost FROM PlayerInfo " +
+                    "WHERE discordID=?;");
+
+            preparedStatement.setString(1, discordID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next())
+            {
+                result = new UserStats(resultSet.getInt("losses"), resultSet.getInt("skullsLost"), false);
+            }
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static void setUserWin(String discordID, int matches, int skulls)
+    {
+        Connection conn;
+        try
+        {
+            conn = getConnection();
+
+            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE PlayerInfo SET wins = ?, " +
+                    "skullsWon = ? WHERE discordID = ?;");
+
+            preparedStatement.setInt(1, matches);
+            preparedStatement.setInt(2, skulls);
+            preparedStatement.setString(3, discordID);
+            preparedStatement.executeUpdate();
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setUserLoss(String discordID, int matches, int skulls)
+    {
+        Connection conn;
+        try
+        {
+            conn = getConnection();
+
+            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE PlayerInfo SET losses = ?, " +
+                    "skullsLost = ? WHERE discordID = ?;");
+
+            preparedStatement.setInt(1, matches);
+            preparedStatement.setInt(2, skulls);
+            preparedStatement.setString(3, discordID);
+            preparedStatement.executeUpdate();
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setUserAdminPerms(String discordID, boolean isAdmin)
+    {
+        Connection conn;
+        try
+        {
+            conn = getConnection();
+
+            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE PlayerInfo SET isAdmin = ? " +
+                    "WHERE discordID = ?;");
+
+            preparedStatement.setInt(1, (isAdmin) ? 1 : 0);
+            preparedStatement.setString(2, discordID);
+            preparedStatement.executeUpdate();
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean isUserAdmin(String discordID)
+    {
+        boolean result = false;
+        Connection conn;
+        try
+        {
+            conn = getConnection();
+
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT isAdmin FROM PlayerInfo WHERE " +
+                    "discordID=?;");
+
+            preparedStatement.setString(1, discordID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) result = resultSet.getInt("isAdmin") == 1;
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

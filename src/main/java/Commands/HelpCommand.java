@@ -111,14 +111,14 @@ public class HelpCommand extends ListenerAdapter
                         case "skb":
                         case "ldb":
                             embedBuilder.setTitle("SkullsBoard Command:");
-                            embedBuilder.setDescription("Displays the top 10 users by (descending) skulls value.\n\n"
+                            embedBuilder.setDescription("Displays the top 10 users by (descending) skull value.\n\n"
                                     + "Aliases: SkullsBoard, leaderboard, skb, ldb.\n"
                                     + "Usage: " + DeathRollMain.getPrefix() + "skullsboard");
                             break;
                         case "skulls":
                         case "sk":
                             embedBuilder.setTitle("Skulls Command:");
-                            embedBuilder.setDescription("Returns the skulls value for the user who used the command.\n\n"
+                            embedBuilder.setDescription("Returns the skull value for the user who used the command.\n\n"
                                     + "Aliases: Skulls, sk.\n"
                                     + "Usage: " + DeathRollMain.getPrefix() + "skulls");
                             break;

@@ -1,6 +1,7 @@
 package Commands;
 
 import Database.SQLiteConnection;
+import Database.UserStats;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -175,6 +176,15 @@ public class ForfeitCommand extends ListenerAdapter
 
                                     int userSkulls = SQLiteConnection.getUserSkulls(event.getUser().getId());
                                     int opponentSkulls = SQLiteConnection.getUserSkulls(duelPartner);
+
+                                    UserStats userLosses = SQLiteConnection.getUserLosses(event.getUser().getId());
+                                    UserStats opponentWins = SQLiteConnection.getUserWins(duelPartner);
+
+                                    SQLiteConnection.setUserLoss(event.getUser().getId(), userLosses.getMatches() + 1,
+                                            userLosses.getSkullAmount() + currentBet);
+
+                                    SQLiteConnection.setUserWin(duelPartner, opponentWins.getMatches() + 1,
+                                            opponentWins.getSkullAmount() + currentBet);
 
                                     SQLiteConnection.setUserSkulls(event.getUser().getId(), userSkulls - currentBet);
                                     SQLiteConnection.setUserSkulls(duelPartner, opponentSkulls + currentBet);

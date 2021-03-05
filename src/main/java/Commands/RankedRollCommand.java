@@ -1,6 +1,7 @@
 package Commands;
 
 import Database.SQLiteConnection;
+import Database.UserStats;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -104,6 +105,16 @@ public class RankedRollCommand extends ListenerAdapter
 
                                         int userSkulls = SQLiteConnection.getUserSkulls(event.getAuthor().getId());
                                         int opponentSkulls = SQLiteConnection.getUserSkulls(duelPartner);
+
+                                        UserStats userLosses = SQLiteConnection.getUserLosses(event.getAuthor()
+                                                .getId());
+                                        UserStats opponentWins = SQLiteConnection.getUserWins(duelPartner);
+
+                                        SQLiteConnection.setUserLoss(event.getAuthor().getId(), userLosses.getMatches()
+                                                + 1, userLosses.getSkullAmount() + currentBet);
+
+                                        SQLiteConnection.setUserWin(duelPartner, opponentWins.getMatches() + 1,
+                                                opponentWins.getSkullAmount() + currentBet);
 
                                         SQLiteConnection.setUserSkulls(event.getAuthor().getId(), userSkulls
                                                 - currentBet);
