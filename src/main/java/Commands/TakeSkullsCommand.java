@@ -9,24 +9,24 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 
 /**
- * DeathRoll Command: GiveSkulls.
+ * DeathRoll Command: TakeSkulls.
  * <ul>
  *     <li> Usable by: Users with administrator permissions.
- *     <li> Alias: GiveSkulls, gs, gsk.
+ *     <li> Alias: TakeSkulls, ts, tsk.
  *     <li> Arguments: A user mention (obligatory), a positive numeric skull amount (obligatory).
- *     <li> Purpose: Give a player a set amount of skulls.
+ *     <li> Purpose: Take a set amount of skulls from a player.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
  * @version 1.3.1
- * @since 1.3.0
+ * @since 1.3.1
  */
-public class GiveSkullsCommand extends ListenerAdapter
+public class TakeSkullsCommand extends ListenerAdapter
 {
     /**
      * Inherited from ListenerAdapter.
      *
-     * This implementation handles the GiveSkulls command usage and can result in the following:
+     * This implementation handles the TakeSkulls command usage and can result in the following:
      * <ul>
      *     <li> error, due to incorrect number of arguments;
      *     <li> error, due to the calling user not being registered;
@@ -35,7 +35,7 @@ public class GiveSkullsCommand extends ListenerAdapter
      *     <li> error, due to the mentioned user not being registered;
      *     <li> error, due to a valid skull amount not having been provided;
      *     <li> error, due to the calling user not having administrator permissions;
-     *     <li> success, where the mentioned user is given the specified skull amount.
+     *     <li> success, where the mentioned user has the specified skull amount taken away.
      * </ul>
      *
      * @param event The JDA event relative to a message having been read by the application in a server channel.
@@ -48,16 +48,16 @@ public class GiveSkullsCommand extends ListenerAdapter
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
             EmbedBuilder embedBuilder = new EmbedBuilder();
 
-            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "giveskulls")
-                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "gs")
-                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "gsk"))
+            if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "takeskulls")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "ts")
+                    || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "tsk"))
             {
                 if (messageText.length != 3)
                 {
                     embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                             .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'giveSkulls' command takes exactly 2 arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "giveSkulls [@player] [skull amount]");
+                            .setDescription("The 'takeSkulls' command takes exactly 2 arguments." +
+                                    "\nUsage: " + DeathRollMain.getPrefix() + "takeSkulls [@player] [skull amount]");
                 }
                 else
                 {
@@ -78,21 +78,21 @@ public class GiveSkullsCommand extends ListenerAdapter
                             {
                                 embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                         .setTitle("Incorrect arguments!")
-                                        .setDescription("The 'giveSkulls' command takes exactly 2 arguments, the " +
+                                        .setDescription("The 'takeSkulls' command takes exactly 2 arguments, the " +
                                                 "first of which MUST be a player mention.\nUsage: " +
-                                                DeathRollMain.getPrefix() + "giveSkulls [@player] [skull amount]");
+                                                DeathRollMain.getPrefix() + "takeSkulls [@player] [skull amount]");
                             }
                             else if (event.getMessage().getMentionedMembers().get(0).getUser().isBot())
                             {
                                 embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Invalid skull giving.")
-                                        .setDescription("You can not give skulls to a bot!");
+                                        .setTitle("Invalid skull taking.")
+                                        .setDescription("You can not take skulls from a bot!");
                             }
                             else if (!SQLiteConnection.isUserRegistered(event.getMessage().getMentionedMembers().get(0)
                                     .getUser().getId())) {
                                 embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Invalid skull giving.")
-                                        .setDescription("You can not give skulls to a non-registered player!");
+                                        .setTitle("Invalid skull taking.")
+                                        .setDescription("You can not take skulls from a non-registered player!");
                             }
                             else if (SQLiteConnection.isUserAdmin(event.getAuthor().getId()))
                             {
@@ -100,34 +100,35 @@ public class GiveSkullsCommand extends ListenerAdapter
                                         .get(0).getUser().getId());
 
                                 SQLiteConnection.setUserSkulls(event.getMessage().getMentionedMembers().get(0).getUser()
-                                        .getId(), userSkulls + parsed);
+                                        .getId(), Math.max(userSkulls - parsed, 0));
 
                                 embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                        .setTitle("Skulls given.")
-                                        .setDescription("Successfully given " + event.getMessage().getMentionedMembers()
-                                                .get(0).getUser().getAsMention() + " " + parsed + " skulls.");
+                                        .setTitle("Skulls taken.")
+                                        .setDescription("Successfully taken " + parsed + " skulls from " +
+                                                        event.getMessage().getMentionedMembers().get(0).getUser()
+                                                                .getAsMention() + ".");
                             }
                             else
                             {
                                 embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                         .setTitle("Insufficient permissions.")
-                                        .setDescription("The 'giveSkulls' command requires administrator permissions.");
+                                        .setDescription("The 'takeSkulls' command requires administrator permissions.");
                             }
                         }
                         catch (NumberFormatException e)
                         {
                             embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                     .setTitle("Incorrect number of arguments!")
-                                    .setDescription("The 'giveSkulls' command takes exactly 2 arguments." +
+                                    .setDescription("The 'takeSkulls' command takes exactly 2 arguments." +
                                             "\nUsage: " + DeathRollMain.getPrefix()
-                                            + "giveSkulls [@player] [skull amount]");
+                                            + "takeSkulls [@player] [skull amount]");
                         }
                     }
                     else
                     {
                         embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                 .setTitle("User not registered!")
-                                .setDescription("To use the 'giveSkulls' command, you must be registered." +
+                                .setDescription("To use the 'takeSkulls' command, you must be registered." +
                                         "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
                     }
                 }

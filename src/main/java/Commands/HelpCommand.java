@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.0
+ * @version 1.3.1
  * @since 1.2.0
  */
 public class HelpCommand extends ListenerAdapter
@@ -71,7 +71,8 @@ public class HelpCommand extends ListenerAdapter
                                 "\n- Register" +
                                 "\n- ShutDown" +
                                 "\n- SkullsBoard" +
-                                "\n- Skulls");
+                                "\n- Skulls" +
+                                "\n- TakeSkulls");
                     }
                     else
                     {
@@ -111,9 +112,10 @@ public class HelpCommand extends ListenerAdapter
                                 break;
                             case "giveskulls":
                             case "gs":
+                            case "gsk":
                                 embedBuilder.setTitle("GiveSkulls Command:");
                                 embedBuilder.setDescription("Give a player a set amount of skulls.\n\n"
-                                        + "Aliases: GiveSkulls, gs.\n"
+                                        + "Aliases: GiveSkulls, gs, gsk.\n"
                                         + "Usage: " + DeathRollMain.getPrefix() + "giveSkulls [@player] "
                                         + "[skull amount]");
                                 break;
@@ -167,6 +169,15 @@ public class HelpCommand extends ListenerAdapter
                                 embedBuilder.setDescription("Shut the application down.\n\n"
                                         + "Aliases: Shutdown, sd.\n"
                                         + "Usage: " + DeathRollMain.getPrefix() + "shutdown");
+                                break;
+                            case "takeskulls":
+                            case "ts":
+                            case "tsk":
+                                embedBuilder.setTitle("TakeSkulls Command:");
+                                embedBuilder.setDescription("Take a set amount of skulls from a player.\n\n"
+                                        + "Aliases: TakeSkulls, ts, tsk.\n"
+                                        + "Usage: " + DeathRollMain.getPrefix() + "takeSkulls [@player] "
+                                        + "[skull amount]");
                                 break;
                             default:
                                 embedBuilder.setColor(DeathRollMain.EMBED_FAILURE);
