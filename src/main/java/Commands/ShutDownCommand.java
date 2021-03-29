@@ -11,14 +11,14 @@ import javax.annotation.Nonnull;
 /**
  * DeathRoll Command: Shutdown.
  * <ul>
- *     <li> Usable by: Bot Administrators.
+ *     <li> Usable by: Users with administrator permissions.
  *     <li> Alias: Shutdown, sd.
  *     <li> Arguments: None.
  *     <li> Purpose: Shut the application down.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.0.0
  */
 public class ShutDownCommand extends ListenerAdapter
@@ -26,9 +26,11 @@ public class ShutDownCommand extends ListenerAdapter
     /**
      * Inherited from ListenerAdapter.
      *
-     * This implementation handles the Shutdown command usage and can result in the following:
+     * This implementation handles the ShutDown command usage and can result in the following:
      * <ul>
      *     <li> error, due to incorrect number of arguments;
+     *     <li> error, due to the calling user not being registered;
+     *     <li> error, due to the calling user not having administrator permissions;
      *     <li> success, shutting down the application.
      * </ul>
      *
@@ -37,37 +39,52 @@ public class ShutDownCommand extends ListenerAdapter
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event)
     {
-        if (!event.getAuthor().isBot()) {
+        if (!event.getAuthor().isBot())
+        {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
             EmbedBuilder embedBuilder = new EmbedBuilder();
 
             if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "shutdown")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "sd"))
             {
-                if (messageText.length != 1) {
+                if (messageText.length != 1)
+                {
                     embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                             .setTitle("Incorrect number of arguments!")
                             .setDescription("The 'shutdown' command takes no arguments." +
                                     "\nUsage: " + DeathRollMain.getPrefix() + "shutdown");
-
-                    event.getChannel().sendMessage(embedBuilder.build()).queue();
                 }
                 else
                 {
-                    if (event.getAuthor().getId().equals("175890397631873024")
-                            || event.getAuthor().getId().equals("129458465969143808"))
+                    if (SQLiteConnection.isUserRegistered(event.getAuthor().getId()))
                     {
-                        SQLiteConnection.cleanShutdown();
+                        if (SQLiteConnection.isUserAdmin(event.getAuthor().getId()))
+                        {
+                            SQLiteConnection.cleanShutdown();
 
-                        embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                .setTitle("Successful shutdown.")
-                                .setDescription("The DeathRoll bot has been shutdown and commands can not be used " +
-                                        "until restarted.");
+                            embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
+                                    .setTitle("Successful shutdown.")
+                                    .setDescription("The DeathRoll bot has been shutdown and commands can not be " +
+                                            "used until restarted.");
 
-                        event.getChannel().sendMessage(embedBuilder.build()).queue();
-                        System.exit(999);
+                            System.exit(999);
+                        }
+                        else
+                        {
+                            embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
+                                    .setTitle("Insufficient permissions.")
+                                    .setDescription("The 'shutdown' command requires administrator permissions.");
+                        }
+                    }
+                    else
+                    {
+                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
+                                .setTitle("User not registered!")
+                                .setDescription("To use the 'shutdown' command, you must be registered." +
+                                        "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
                     }
                 }
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
         }
     }

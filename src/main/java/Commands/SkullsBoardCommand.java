@@ -20,7 +20,7 @@ import java.util.List;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.0.0
  */
 public class SkullsBoardCommand extends ListenerAdapter
@@ -65,8 +65,8 @@ public class SkullsBoardCommand extends ListenerAdapter
                     StringBuilder skullsboard = new StringBuilder();
                     for (UserSkulls skulls : userSkullsList)
                     {
-                        skullsboard.append(event.getJDA().retrieveUserById(skulls.getUserID()).complete().getAsMention())
-                                .append(" - ").append(skulls.getSkulls()).append("\n");
+                        skullsboard.append(event.getJDA().retrieveUserById(skulls.getUserID()).complete()
+                                .getAsMention()).append(" - ").append(skulls.getSkulls()).append("\n");
                     }
                     embedBuilder.setDescription(skullsboard.toString());
                     event.getChannel().sendMessage(embedBuilder.build()).queue();

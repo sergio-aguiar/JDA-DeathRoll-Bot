@@ -20,7 +20,7 @@ import java.util.List;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.0.0
  */
 public class SQLiteConnection
@@ -606,7 +606,11 @@ public class SQLiteConnection
             e.printStackTrace();
         }
     }
-
+    /**
+     * Get function for retrieving a user's number of wins and skulls won.
+     * @param discordID The user's discord ID.
+     * @return A user's number of wins and skulls won.
+     */
     public static UserStats getUserWins(String discordID)
     {
         UserStats result = null;
@@ -634,7 +638,11 @@ public class SQLiteConnection
         }
         return result;
     }
-
+    /**
+     * Get function for retrieving a user's number of losses and skulls lost.
+     * @param discordID The user's discord ID.
+     * @return A user's number of losses and skulls lost.
+     */
     public static UserStats getUserLosses(String discordID)
     {
         UserStats result = null;
@@ -662,7 +670,12 @@ public class SQLiteConnection
         }
         return result;
     }
-
+    /**
+     * Set function for a user's number of wins and skulls won.
+     * @param discordID The user's discord ID.
+     * @param matches The user's number of wins.
+     * @param skulls The user's number of skulls won.
+     */
     public static void setUserWin(String discordID, int matches, int skulls)
     {
         Connection conn;
@@ -685,7 +698,12 @@ public class SQLiteConnection
             e.printStackTrace();
         }
     }
-
+    /**
+     * Set function for a user's number of losses and skulls lost.
+     * @param discordID The user's discord ID.
+     * @param matches The user's number of losses.
+     * @param skulls The user's number of skulls lost.
+     */
     public static void setUserLoss(String discordID, int matches, int skulls)
     {
         Connection conn;
@@ -708,7 +726,11 @@ public class SQLiteConnection
             e.printStackTrace();
         }
     }
-
+    /**
+     * Set function for a user's administrator permissions.
+     * @param discordID The user's discord ID.
+     * @param isAdmin Whether the user will have administrator permissions or not.
+     */
     public static void setUserAdminPerms(String discordID, boolean isAdmin)
     {
         Connection conn;
@@ -730,7 +752,11 @@ public class SQLiteConnection
             e.printStackTrace();
         }
     }
-
+    /**
+     * Function that returns whether a user has administrator permissions or not.
+     * @param discordID The user's discord ID.
+     * @return True if the user has administrator permissions, and false otherwise.
+     */
     public static boolean isUserAdmin(String discordID)
     {
         boolean result = false;

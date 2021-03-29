@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.0.0
  */
 public class RegisterCommand extends ListenerAdapter

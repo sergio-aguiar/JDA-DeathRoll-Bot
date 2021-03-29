@@ -22,7 +22,7 @@ import java.awt.*;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.0.0
  */
 public class DuelCommand extends ListenerAdapter
@@ -39,7 +39,7 @@ public class DuelCommand extends ListenerAdapter
      *     <li> error, due to a valid player mention not having been provided;
      *     <li> error, due to the challenged player being a bot;
      *     <li> error, due to the challenged player being the same as the command caller;
-     *     <li> error, due to the challenged player already being ina  due;
+     *     <li> error, due to the challenged player already being in a duel;
      *     <li> error, due to a valid bet amount not having been provided;
      *     <li> error, due to the calling user's skulls value being inferior to the provided bet amount;
      *     <li> error, due to an incorrect embed having been created;
@@ -92,7 +92,7 @@ public class DuelCommand extends ListenerAdapter
                                 embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                         .setTitle("Incorrect arguments!")
                                         .setDescription("The 'duel' command takes exactly 2 arguments, the first of " +
-                                                "which MUST be a player " + "mention." + "\nUsage: "
+                                                "which MUST be a player mention." + "\nUsage: "
                                                 + DeathRollMain.getPrefix() + "duel [@player] [bet amount]");
                             }
                             else
@@ -152,7 +152,8 @@ public class DuelCommand extends ListenerAdapter
                                                                 + event.getAuthor().getAsMention() + "!"
                                                                 + "\nBet amount: " + parsed + "\nDo you accept?");
 
-                                                SQLiteConnection.setUserRequestingDuelState(event.getAuthor().getId(), 1);
+                                                SQLiteConnection.setUserRequestingDuelState(event.getAuthor().getId(),
+                                                        1);
                                             }
                                         }
                                     }
@@ -161,7 +162,8 @@ public class DuelCommand extends ListenerAdapter
                                         embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                                 .setTitle("Incorrect argument value!")
                                                 .setDescription("The 'duel' command takes exactly 2 arguments."
-                                                        + "\nUsage: " + DeathRollMain.getPrefix() + "duel [@player] [bet amount]");
+                                                        + "\nUsage: " + DeathRollMain.getPrefix() + "duel [@player] "
+                                                        + "[bet amount]");
                                     }
                                 }
                             }
