@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 /**
  * DeathRoll Command: Profile.
@@ -66,16 +67,17 @@ public class ProfileCommand extends ListenerAdapter
                 {
                     if (SQLiteConnection.isUserRegistered(event.getAuthor().getId()))
                     {
+                        DecimalFormat df = new DecimalFormat("#.##");
+
                         if (messageText.length == 1)
                         {
                             int skulls = SQLiteConnection.getUserSkulls(event.getAuthor().getId());
                             UserStats wins = SQLiteConnection.getUserWins(event.getAuthor().getId());
                             UserStats losses = SQLiteConnection.getUserLosses(event.getAuthor().getId());
 
-                            double winRate = (wins.getMatches() + losses.getMatches() == 0) ? 0 : (double)
-                                    wins.getMatches() / ((double) wins.getMatches() + (double) losses.getMatches());
-
-                            BigDecimal db = new BigDecimal(winRate).setScale(2, RoundingMode.HALF_UP);
+                            double winRate = (wins.getMatches() + losses.getMatches() == 0) ? 0 : ((double)
+                                    wins.getMatches() / ((double) wins.getMatches() + (double)
+                                    losses.getMatches()) * 100);
 
                             embedBuilder.setColor(DeathRollMain.EMBED_NEUTRAL)
                                     .setTitle(event.getAuthor().getName() + "'s profile:")
@@ -83,7 +85,7 @@ public class ProfileCommand extends ListenerAdapter
                                     .setDescription("**Skulls:** " + skulls
                                             + "\n\n**Wins:** " + wins.getMatches()
                                             + "\n**Losses:** " + losses.getMatches()
-                                            + "\n**Win Rate:** " + (db.doubleValue() * 100) + "%"
+                                            + "\n**Win Rate:** " + df.format(winRate) + "%"
                                             + "\n\n**Skulls Won:** " + wins.getSkullAmount()
                                             + "\n**Skulls Lost:** " + losses.getSkullAmount()
                                             + "\n**Net Profit:** " + (wins.getSkullAmount() - losses.getSkullAmount()));
@@ -123,11 +125,9 @@ public class ProfileCommand extends ListenerAdapter
                                     UserStats losses = SQLiteConnection.getUserLosses(event.getMessage()
                                             .getMentionedMembers().get(0).getUser().getId());
 
-                                    double winRate = (wins.getMatches() + losses.getMatches() == 0) ? 0 : (double)
+                                    double winRate = (wins.getMatches() + losses.getMatches() == 0) ? 0 : ((double)
                                             wins.getMatches() / ((double) wins.getMatches() + (double)
-                                            losses.getMatches());
-
-                                    BigDecimal db = new BigDecimal(winRate).setScale(2, RoundingMode.HALF_UP);
+                                            losses.getMatches()) * 100);
 
                                     embedBuilder.setColor(DeathRollMain.EMBED_NEUTRAL)
                                             .setTitle(event.getMessage().getMentionedMembers().get(0).getUser()
@@ -137,7 +137,7 @@ public class ProfileCommand extends ListenerAdapter
                                             .setDescription("**Skulls:** " + skulls
                                                     + "\n\n**Wins:** " + wins.getMatches()
                                                     + "\n**Losses:** " + losses.getMatches()
-                                                    + "\n**Win Rate:** " + (db.doubleValue() * 100) + "%"
+                                                    + "\n**Win Rate:** " + df.format(winRate) + "%"
                                                     + "\n\n**Skulls Won:** " + wins.getSkullAmount()
                                                     + "\n**Skulls Lost:** " + losses.getSkullAmount()
                                                     + "\n**Net Profit:** " + (wins.getSkullAmount() -
