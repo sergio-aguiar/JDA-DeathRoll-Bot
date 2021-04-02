@@ -22,7 +22,7 @@ import java.awt.*;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.1
+ * @version 1.3.2
  * @since 1.0.0
  */
 public class DuelCommand extends ListenerAdapter
@@ -116,7 +116,7 @@ public class DuelCommand extends ListenerAdapter
                                     embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                             .setTitle("Invalid Challenge:")
                                             .setDescription("User " + event.getMessage().getMentionedMembers().get(0)
-                                                    .getId() + " is already in a duel!");
+                                                    .getAsMention() + " is already in a duel!");
                                 }
                                 else
                                 {

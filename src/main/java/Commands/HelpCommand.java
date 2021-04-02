@@ -12,12 +12,12 @@ import javax.annotation.Nonnull;
  * <ul>
  *     <li> Usable by: Any user.
  *     <li> Alias: Help, h.
- *     <li> Arguments: A command name or one of their aliases.
+ *     <li> Arguments: Either none or a command name/alias.
  *     <li> Purpose: Display basic information regarding the usage of command a command.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.1
+ * @version 1.3.2
  * @since 1.2.0
  */
 public class HelpCommand extends ListenerAdapter
@@ -67,6 +67,7 @@ public class HelpCommand extends ListenerAdapter
                                 "\n- Froll" +
                                 "\n- GiveSkulls" +
                                 "\n- Help" +
+                                "\n- Profile" +
                                 "\n- Roll" +
                                 "\n- Register" +
                                 "\n- ShutDown" +
@@ -128,6 +129,15 @@ public class HelpCommand extends ListenerAdapter
                                         + "Usage:\n"
                                         + "(1) " + DeathRollMain.getPrefix() + "help\n"
                                         + "(2) " + DeathRollMain.getPrefix() + "help [command]");
+                                break;
+                            case "profile":
+                            case "p":
+                                embedBuilder.setTitle("Profile Command:");
+                                embedBuilder.setDescription("Display a user's match and skull information.\n\n"
+                                        + "Aliases: Profile, p.\n"
+                                        + "Usage:\n"
+                                        + "(1) " + DeathRollMain.getPrefix() + "profile\n"
+                                        + "(2) " + DeathRollMain.getPrefix() + "profile [@player]");
                                 break;
                             case "roll":
                             case "rr":

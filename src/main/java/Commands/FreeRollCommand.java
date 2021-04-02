@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.1
+ * @version 1.3.2
  * @since 1.0.0
  */
 public class FreeRollCommand extends ListenerAdapter
@@ -51,31 +51,42 @@ public class FreeRollCommand extends ListenerAdapter
                             .setTitle("Incorrect number of arguments!")
                             .setDescription("The 'froll' command takes exactly 1 argument." +
                                     "\nUsage: " + DeathRollMain.getPrefix() + "froll [maximum roll value]");
-                } else {
+                }
+                else
+                {
                     int parsed = 0;
 
-                    try {
+                    try
+                    {
                         parsed = Integer.parseInt(messageText[1]);
-                    } catch (NumberFormatException e) {
+                    }
+                    catch (NumberFormatException e)
+                    {
                         embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                 .setTitle("Incorrect argument value!")
                                 .setDescription("The 'froll' command takes exactly 1 argument." +
                                         "\nUsage: " + DeathRollMain.getPrefix() + "froll [maximum roll value]");
                     }
 
-                    if (parsed < 2) {
+                    if (parsed < 2)
+                    {
                         embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
                                 .setTitle("Incorrect roll value!")
                                 .setDescription("Argument [maximum roll value] must have a value of 2 or greater!");
-                    } else {
+                    }
+                    else
+                    {
                         int rand = DeathRollMain.getRandom().nextInt(parsed) + 1;
 
-                        if (rand > 1) {
+                        if (rand > 1)
+                        {
                             embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
                                     .setTitle("Value rolled:")
                                     .setDescription("User " + event.getAuthor().getAsMention()
                                             + " just rolled a " + rand + "!");
-                        } else {
+                        }
+                        else
+                        {
                             embedBuilder.setColor(DeathRollMain.EMBED_NEUTRAL)
                                     .setTitle("DEATH ROLL:")
                                     .setDescription("User " + event.getAuthor().getAsMention()
