@@ -1,5 +1,6 @@
 package Commands;
 
+import Common.CommonEmbeds;
 import Database.SQLiteConnection;
 import Database.UserStats;
 import Main.DeathRollMain;
@@ -20,11 +21,11 @@ import java.awt.*;
  *     <li> Usable by: Registered users who are currently in a duel.
  *     <li> Alias: Forfeit, df, f.
  *     <li> Arguments: None.
- *     <li> Purpose: Force the currently ongoing duel to end in a loss for the command user.
+ *     <li> Purpose: Forces the currently ongoing duel to end in a loss for the command user.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class ForfeitCommand extends ListenerAdapter
@@ -49,7 +50,7 @@ public class ForfeitCommand extends ListenerAdapter
         if (!event.getAuthor().isBot())
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
-            EmbedBuilder embedBuilder = new EmbedBuilder();
+            EmbedBuilder embedBuilder;
 
             if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "forfeit")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "df")
@@ -57,10 +58,11 @@ public class ForfeitCommand extends ListenerAdapter
             {
                 if (messageText.length != 1)
                 {
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'forfeit' command takes no arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "forfeit");
+                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                            "The **forfeit** command takes **no** arguments.\n\n" +
+                                    "**Usage:**\n" +
+                                    "```• " + DeathRollMain.getPrefix() + "forfeit```",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 }
                 else
                 {
@@ -68,25 +70,25 @@ public class ForfeitCommand extends ListenerAdapter
                     {
                         if (SQLiteConnection.isUserInDuel(event.getAuthor().getId()))
                         {
-                            embedBuilder.setColor(DeathRollMain.EMBED_NEUTRAL)
-                                    .setTitle("Duel forfeit:")
-                                    .setDescription(event.getAuthor().getAsMention() + ", you are trying to forfeit " +
-                                            "the duel.\nThis is equivalent to a loss.\nProceed?");
+                            embedBuilder = CommonEmbeds.activeReactEmbed("Duel Forfeit",
+                                    event.getAuthor().getAsMention() + ", you are trying to forfeit the duel.\n" +
+                                            "This is equivalent to a loss.\nProceed?");
                         }
                         else
                         {
-                            embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                    .setTitle("Not currently in a duel!")
-                                    .setDescription("User " + event.getAuthor().getAsMention() + " is not currently" +
-                                            " in a duel.\nTo begin one, use the 'duel' command.");
+                            embedBuilder = CommonEmbeds.errorEmbed("Failed Forfeit",
+                                    "User " + event.getAuthor().getAsMention() + " is not currently in a duel.\n" +
+                                            "To begin one, use the **duel** command.",
+                                    event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                         }
                     }
                     else
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("User not registered!")
-                                .setDescription("To use the 'forfeit' command, you must be registered." +
-                                        "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
+                        embedBuilder = CommonEmbeds.errorEmbed("Non-Registered User",
+                                "To use the **forfeit** command, you must be registered." +
+                                        "\nTo do so, run the `" + DeathRollMain.getPrefix() + "register` command.",
+                                event.getAuthor().getName(), "Come register, we have cookies!" ,
+                                event.getAuthor().getAvatarUrl());
                     }
                 }
                 event.getChannel().sendMessage(embedBuilder.build()).queue();
@@ -94,24 +96,25 @@ public class ForfeitCommand extends ListenerAdapter
         }
         else
         {
+            // TODO: GENERALIZE FOR OTHER BOTS (asking for bot ID on the form)
             if (event.getAuthor().getId().equals("731819691479269426")
                     || event.getAuthor().getId().equals("743881549392511027"))
             {
                 if (event.getMessage().getEmbeds().size() != 1)
                 {
-                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    EmbedBuilder embedBuilder;
 
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Unexpected Error!")
-                            .setDescription("Target message either composed by multiple embeds or none." +
-                                    "\nPlease contact a bot developer.");
+                    embedBuilder = CommonEmbeds.errorEmbed("Unexpected Error",
+                            "Target message either composed by multiple embeds or none.\nPlease contact a bot " +
+                                    "developer.",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
 
                     event.getChannel().sendMessage(embedBuilder.build()).queue();
                 }
                 else
                 {
                     String title = event.getMessage().getEmbeds().get(0).getTitle();
-                    if (title != null && title.equals("Duel forfeit:"))
+                    if (title != null && title.equals("Duel Forfeit"))
                     {
                         event.getMessage().addReaction("✅").queue();
                         event.getMessage().addReaction("❌").queue();
@@ -127,6 +130,7 @@ public class ForfeitCommand extends ListenerAdapter
      * <ul>
      *     <li> error, due to being unable to fetch the embed's color (please contact the developer);
      *     <li> error, due to the reacting user not being registered;
+     *     <li> error, due to the duel having ended already;
      *     <li> success when accepted, where the database is updated to reflect the fact that the duel ended;
      *     <li> success when declined, where the duel proceeds as if this command had never been called.
      * </ul>
@@ -150,10 +154,10 @@ public class ForfeitCommand extends ListenerAdapter
                 e.printStackTrace();
             }
 
-            if (message.getEmbeds().size() == 1 && color != null && color.getRGB() == new Color(0,0,0).getRGB())
+            if (message.getEmbeds().size() == 1 && color != null && color.getRGB() == CommonEmbeds.ACTIVE_EMBED_INT)
             {
                 MessageEmbed messageEmbed = message.getEmbeds().get(0);
-                if (messageEmbed.getTitle() != null && messageEmbed.getTitle().equals("Duel forfeit:"))
+                if (messageEmbed.getTitle() != null && messageEmbed.getTitle().equals("Duel Forfeit"))
                 {
                     if (messageEmbed.getDescription() != null)
                     {
@@ -169,75 +173,88 @@ public class ForfeitCommand extends ListenerAdapter
 
                             if (SQLiteConnection.isUserRegistered(event.getUserId()))
                             {
-                                if (event.getReactionEmote().getEmoji().equals("✅"))
+                                if (SQLiteConnection.isUserInDuel(event.getUser().getId()))
                                 {
-                                    int currentBet = SQLiteConnection.getCurrentBet(event.getUser().getId());
-                                    String duelPartner = SQLiteConnection.getDuelPartner(event.getUser().getId());
+                                    if (event.getReactionEmote().getEmoji().equals("✅"))
+                                    {
+                                        int currentBet = SQLiteConnection.getCurrentBet(event.getUser().getId());
+                                        String duelPartner = SQLiteConnection.getDuelPartner(event.getUser().getId());
 
-                                    int userSkulls = SQLiteConnection.getUserSkulls(event.getUser().getId());
-                                    int opponentSkulls = SQLiteConnection.getUserSkulls(duelPartner);
+                                        int userSkulls = SQLiteConnection.getUserSkulls(event.getUser().getId());
+                                        int opponentSkulls = SQLiteConnection.getUserSkulls(duelPartner);
 
-                                    UserStats userLosses = SQLiteConnection.getUserLosses(event.getUser().getId());
-                                    UserStats opponentWins = SQLiteConnection.getUserWins(duelPartner);
+                                        UserStats userLosses = SQLiteConnection.getUserLosses(event.getUser().getId());
+                                        UserStats opponentWins = SQLiteConnection.getUserWins(duelPartner);
 
-                                    SQLiteConnection.setUserLoss(event.getUser().getId(), userLosses.getMatches() + 1,
-                                            userLosses.getSkullAmount() + currentBet);
+                                        SQLiteConnection.setUserLoss(event.getUser().getId(), userLosses.getMatches()
+                                                        + 1, userLosses.getSkullAmount() + currentBet);
 
-                                    SQLiteConnection.setUserWin(duelPartner, opponentWins.getMatches() + 1,
-                                            opponentWins.getSkullAmount() + currentBet);
+                                        SQLiteConnection.setUserWin(duelPartner, opponentWins.getMatches() + 1,
+                                                opponentWins.getSkullAmount() + currentBet);
 
-                                    SQLiteConnection.setUserSkulls(event.getUser().getId(), userSkulls - currentBet);
-                                    SQLiteConnection.setUserSkulls(duelPartner, opponentSkulls + currentBet);
+                                        SQLiteConnection.setUserSkulls(event.getUser().getId(), userSkulls -
+                                                currentBet);
+                                        SQLiteConnection.setUserSkulls(duelPartner, opponentSkulls + currentBet);
 
-                                    SQLiteConnection.setNextRoll(event.getUser().getId(), 0);
-                                    SQLiteConnection.setNextRoll(duelPartner, 0);
+                                        SQLiteConnection.setNextRoll(event.getUser().getId(), 0);
+                                        SQLiteConnection.setNextRoll(duelPartner, 0);
 
-                                    SQLiteConnection.updateUserDuelEnded(event.getUser().getId());
-                                    SQLiteConnection.updateUserDuelEnded(duelPartner);
+                                        SQLiteConnection.updateUserDuelEnded(event.getUser().getId());
+                                        SQLiteConnection.updateUserDuelEnded(duelPartner);
 
-                                    embedBuilder.setTitle(embed.getTitle())
-                                            .setDescription(embed.getDescription())
-                                            .setColor(DeathRollMain.EMBED_SUCCESS)
-                                            .build();
+                                        embedBuilder.setTitle(embed.getTitle())
+                                                .setDescription(embed.getDescription())
+                                                .setColor(CommonEmbeds.EMBED_SUCCESS)
+                                                .build();
 
-                                    message.editMessage(embedBuilder.build()).complete();
+                                        message.editMessage(embedBuilder.build()).complete();
 
-                                    embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                            .setTitle("Forfeit confirmed.")
-                                            .setDescription("User " + event.getUser().getAsMention()
-                                                    + " just confirmed their forfeit request!");
+                                        embedBuilder = CommonEmbeds.successEmbed("Forfeit Confirmed",
+                                                "User " + event.getUser().getAsMention() + " just confirmed their " +
+                                                        "forfeit request!",
+                                                "Congratulations, " + event.getUser().getName() + "." +
+                                                        " You successfully failed at dueling. Pity.",
+                                                event.getUser().getAvatarUrl());
+                                    }
+                                    else if (event.getReactionEmote().getEmoji().equals("❌"))
+                                    {
+                                        embedBuilder.setTitle(embed.getTitle())
+                                                .setDescription(embed.getDescription())
+                                                .setColor(CommonEmbeds.EMBED_FAILURE)
+                                                .build();
 
+                                        message.editMessage(embedBuilder.build()).complete();
+
+                                        embedBuilder = CommonEmbeds.successEmbed("Forfeit Aborted",
+                                                "User " + event.getUser().getAsMention() + " just aborted their " +
+                                                        "forfeit request!",
+                                                "Good on you, " + event.getUser().getName() + "." +
+                                                        " Now get in there and lose some Skulls the REAL way!",
+                                                event.getUser().getAvatarUrl());
+                                    }
                                 }
                                 else
                                 {
-                                    embedBuilder.setTitle(embed.getTitle())
-                                            .setDescription(embed.getDescription())
-                                            .setColor(DeathRollMain.EMBED_FAILURE)
-                                            .build();
-
-                                    message.editMessage(embedBuilder.build()).complete();
-
-                                    embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                            .setTitle("Forfeit aborted.")
-                                            .setDescription("User " + event.getUser().getAsMention()
-                                                    + " just aborted their forfeit request!");
-
+                                    embedBuilder = CommonEmbeds.errorEmbed("Non-existing Duel",
+                                            "You must be in a duel to forfeit.\nYou cannot do so if it already ended.",
+                                            event.getUser().getName(), "Someone beat you to it..." ,
+                                            event.getUser().getAvatarUrl());
                                 }
                             }
                             else
                             {
                                 embedBuilder.setTitle(embed.getTitle())
                                         .setDescription(embed.getDescription())
-                                        .setColor(DeathRollMain.EMBED_FAILURE)
+                                        .setColor(CommonEmbeds.EMBED_FAILURE)
                                         .build();
 
                                 message.editMessage(embedBuilder.build()).complete();
 
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("User not registered!")
-                                        .setDescription("To forfeit a duel, you must be registered." +
-                                                "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
-
+                                embedBuilder = CommonEmbeds.errorEmbed("Non-Registered User",
+                                        "To forfeit a duel request, you must be registered.\nTo do so, run the `" +
+                                                DeathRollMain.getPrefix() + "register` command.",
+                                        event.getUser().getName(), "Come register, we have cookies!" ,
+                                        event.getUser().getAvatarUrl());
                             }
                             event.getChannel().sendMessage(embedBuilder.build()).queue();
                         }

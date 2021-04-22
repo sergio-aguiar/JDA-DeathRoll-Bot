@@ -1,5 +1,6 @@
 package Commands;
 
+import Common.CommonEmbeds;
 import Database.SQLiteConnection;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -18,7 +19,7 @@ import javax.annotation.Nonnull;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class RegisterCommand extends ListenerAdapter
@@ -47,36 +48,36 @@ public class RegisterCommand extends ListenerAdapter
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "reg")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "r"))
             {
-                EmbedBuilder embedBuilder = new EmbedBuilder();
+                EmbedBuilder embedBuilder;
 
                 if (messageText.length != 1)
                 {
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'register' command takes no arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "register");
+                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                            "The **register** command takes **no** arguments.\n\n" +
+                            "**Usage:**\n" +
+                                    "```• " + DeathRollMain.getPrefix() + "register```",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 }
                 else
                 {
                     if (SQLiteConnection.isUserRegistered(event.getAuthor().getId()))
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("Registration error!")
-                                .setDescription("User " + event.getAuthor().getAsMention() + " is already registered!");
+                        embedBuilder = CommonEmbeds.errorEmbed("Registration Failed",
+                                "User " + event.getAuthor().getAsMention() + " is already registered.",
+                                event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                     }
                     else if (SQLiteConnection.registerUser(event.getAuthor().getId()))
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                .setTitle("User registered.")
-                                .setDescription("User " + event.getAuthor().getAsMention()
-                                        + " was successfully registered!");
+                        embedBuilder = CommonEmbeds.successEmbed("User Registered",
+                                "User " + event.getAuthor().getAsMention() + " was successfully registered!",
+                                "Welcome, " + event.getAuthor().getName() + ", to the last place you'll ever enter.",
+                                event.getAuthor().getAvatarUrl());
                     }
                     else
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("Unexpected error!")
-                                .setDescription("User could not be registered." +
-                                        "\nPlease contact a bot developer.");
+                        embedBuilder = CommonEmbeds.errorEmbed("Unexpected Error",
+                                "User could not be registered.\nPlease contact a bot developer.",
+                                event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                     }
                 }
                 event.getChannel().sendMessage(embedBuilder.build()).queue();

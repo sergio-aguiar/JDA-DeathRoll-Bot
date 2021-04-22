@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Database: SQLiteConnection.
@@ -20,7 +19,7 @@ import java.util.List;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class SQLiteConnection
@@ -207,11 +206,11 @@ public class SQLiteConnection
     }
     /**
      * Get function for the top users by skulls.
-     * @return A list with the top users by skulls, up to a maximum of 10.
+     * @return An array list with the top users by skulls, up to a maximum of 10.
      */
-    public static List<UserSkulls> getSkullsLeaderboard()
+    public static ArrayList<UserSkulls> getSkullsLeaderboard()
     {
-        List<UserSkulls> result = new ArrayList<>();
+        ArrayList<UserSkulls> result = new ArrayList<>();
         Connection conn;
         try
         {

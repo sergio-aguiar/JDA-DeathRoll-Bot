@@ -1,5 +1,6 @@
 package Commands;
 
+import Common.CommonEmbeds;
 import Database.SQLiteConnection;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,11 +15,11 @@ import javax.annotation.Nonnull;
  *     <li> Usable by: Specific users allowed by the developer.
  *     <li> Alias: ClaimAdminPermissions, cap.
  *     <li> Arguments: None.
- *     <li> Purpose: Claim the ability to use admin commands.
+ *     <li> Purpose: Claims the ability to use admin commands.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.3.0
  */
 public class ClaimAdminPermissionsCommand extends ListenerAdapter
@@ -43,17 +44,18 @@ public class ClaimAdminPermissionsCommand extends ListenerAdapter
         if (!event.getAuthor().isBot())
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
-            EmbedBuilder embedBuilder = new EmbedBuilder();
+            EmbedBuilder embedBuilder;
 
             if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "claimAdminPermissions")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "cap"))
             {
                 if (messageText.length != 1)
                 {
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'claimAdminPermissions' command takes no arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "claimAdminPermissions");
+                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                            "The **claimAdminPermissions** command takes **no** arguments.\n\n" +
+                            "**Usage:**\n" +
+                                    "```• " + DeathRollMain.getPrefix() + "claimAdminPermissions```",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 }
                 else
                 {
@@ -64,35 +66,38 @@ public class ClaimAdminPermissionsCommand extends ListenerAdapter
                         {
                             if (SQLiteConnection.isUserAdmin(event.getAuthor().getId()))
                             {
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Failed permission granting.")
-                                        .setDescription("User " + event.getAuthor().getAsMention() + " already has " +
-                                                "administrator permissions.");
+                                embedBuilder = CommonEmbeds.errorEmbed("Failed Permission Granting",
+                                        "User " + event.getAuthor().getAsMention() + " already has administrator " +
+                                                "permissions.",
+                                        event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                             }
                             else
                             {
                                 SQLiteConnection.setUserAdminPerms(event.getAuthor().getId(), true);
 
-                                embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                        .setTitle("Successful permission granting.")
-                                        .setDescription("User " + event.getAuthor().getAsMention() + " has been " +
-                                                "granted administrator permissions.");
+                                embedBuilder = CommonEmbeds.successEmbed("Permissions Granted",
+                                        "User " + event.getAuthor().getAsMention() + " has been granted administrator" +
+                                                " permissions.",
+                                        "All hail " + event.getAuthor().getName() + ", user of cheat codes!",
+                                        event.getAuthor().getAvatarUrl());
                             }
                         }
                         else
                         {
-                            embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                    .setTitle("Failed permission granting.")
-                                    .setDescription("User " + event.getAuthor().getAsMention() + " is not eligible " +
-                                            "to claim administrator permissions.");
+                            embedBuilder = CommonEmbeds.errorEmbed("Failed Permission Granting",
+                                    "User " + event.getAuthor().getAsMention() + " is not eligible to claim " +
+                                            "administrator permissions.",
+                                    event.getAuthor().getName(), "I see you trying to cheat!",
+                                    event.getAuthor().getAvatarUrl());
                         }
                     }
                     else
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("User not registered!")
-                                .setDescription("To use the 'claimAdminPermissions' command, you must be registered." +
-                                        "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
+                        embedBuilder = CommonEmbeds.errorEmbed("Non-Registered User",
+                                "To use the **claimAdminPermissions** command, you must be registered." +
+                                        "\nTo do so, run the `" + DeathRollMain.getPrefix() + "register` command.",
+                                event.getAuthor().getName(), "Come register, we have cookies!" ,
+                                event.getAuthor().getAvatarUrl());
                     }
                 }
                 event.getChannel().sendMessage(embedBuilder.build()).queue();

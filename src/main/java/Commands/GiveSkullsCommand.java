@@ -1,5 +1,6 @@
 package Commands;
 
+import Common.CommonEmbeds;
 import Database.SQLiteConnection;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,11 +15,11 @@ import javax.annotation.Nonnull;
  *     <li> Usable by: Users with administrator permissions.
  *     <li> Alias: GiveSkulls, gs, gsk.
  *     <li> Arguments: A user mention (obligatory), a positive numeric skull amount (obligatory).
- *     <li> Purpose: Give a player a set amount of skulls.
+ *     <li> Purpose: Gives a player a set amount of skulls.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.3.0
  */
 public class GiveSkullsCommand extends ListenerAdapter
@@ -46,7 +47,7 @@ public class GiveSkullsCommand extends ListenerAdapter
         if (!event.getAuthor().isBot())
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
-            EmbedBuilder embedBuilder = new EmbedBuilder();
+            EmbedBuilder embedBuilder;
 
             if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "giveskulls")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "gs")
@@ -54,81 +55,95 @@ public class GiveSkullsCommand extends ListenerAdapter
             {
                 if (messageText.length != 3)
                 {
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'giveSkulls' command takes exactly 2 arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "giveSkulls [@player] [skull amount]");
+                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                            "The **giveSkulls** command takes exactly **2** arguments.\n\n" +
+                            "**Usage:**\n" +
+                                    "```• " + DeathRollMain.getPrefix() + "giveSkulls [@player] [skull amount]```",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 }
                 else
                 {
                     if (SQLiteConnection.isUserRegistered(event.getAuthor().getId()))
                     {
-                        try
+                        if (SQLiteConnection.isUserAdmin(event.getAuthor().getId()))
                         {
-                            int parsed = Integer.parseInt(messageText[2]);
+                            try
+                            {
+                                int parsed = Integer.parseInt(messageText[2]);
 
-                            if (parsed <= 0)
-                            {
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Incorrect argument value!")
-                                        .setDescription("The 'skull amount' argument must be a positive " +
-                                                "value.");
-                            }
-                            else if (event.getMessage().getMentionedMembers().size() != 1)
-                            {
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Incorrect arguments!")
-                                        .setDescription("The 'giveSkulls' command takes exactly 2 arguments, the " +
-                                                "first of which MUST be a player mention.\nUsage: " +
-                                                DeathRollMain.getPrefix() + "giveSkulls [@player] [skull amount]");
-                            }
-                            else if (event.getMessage().getMentionedMembers().get(0).getUser().isBot())
-                            {
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Invalid skull giving.")
-                                        .setDescription("You can not give skulls to a bot!");
-                            }
-                            else if (!SQLiteConnection.isUserRegistered(event.getMessage().getMentionedMembers().get(0)
-                                    .getUser().getId())) {
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Invalid skull giving.")
-                                        .setDescription("You can not give skulls to a non-registered player!");
-                            }
-                            else if (SQLiteConnection.isUserAdmin(event.getAuthor().getId()))
-                            {
-                                int userSkulls = SQLiteConnection.getUserSkulls(event.getMessage().getMentionedMembers()
-                                        .get(0).getUser().getId());
+                                if (parsed <= 0)
+                                {
+                                    embedBuilder = CommonEmbeds.errorEmbed("Invalid Argument",
+                                            "The **skull amount** argument must be a positive value.",
+                                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
+                                }
+                                else if (event.getMessage().getMentionedMembers().size() != 1)
+                                {
+                                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                                            "The **giveSkulls** command takes exactly **2** arguments, the first of " +
+                                                    "which **must** be a player mention.\n\n" +
+                                            "**Usage:**\n" +
+                                                    "```• " + DeathRollMain.getPrefix() + "giveSkulls [@player] " +
+                                                    "[skull amount]```",
+                                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
+                                }
+                                else if (event.getMessage().getMentionedMembers().get(0).getUser().isBot())
+                                {
+                                    embedBuilder = CommonEmbeds.errorEmbed("Invalid Skull Giving",
+                                            "You cannot give skulls to a bot user.",
+                                            event.getAuthor().getName(), "Bot users need not your pity skulls.",
+                                            event.getAuthor().getAvatarUrl());
+                                }
+                                else if (!SQLiteConnection.isUserRegistered(event.getMessage().getMentionedMembers()
+                                        .get(0).getUser().getId()))
+                                {
+                                    embedBuilder = CommonEmbeds.errorEmbed("Invalid Skull Giving",
+                                            "You cannot give skulls to a non-registered user.",
+                                            event.getAuthor().getName(), "You should nag them some more. Maybe they'll " +
+                                                    "register...",
+                                            event.getAuthor().getAvatarUrl());
+                                }
+                                else
+                                {
+                                    int userSkulls = SQLiteConnection.getUserSkulls(event.getMessage().getMentionedMembers()
+                                            .get(0).getUser().getId());
 
-                                SQLiteConnection.setUserSkulls(event.getMessage().getMentionedMembers().get(0).getUser()
-                                        .getId(), userSkulls + parsed);
+                                    SQLiteConnection.setUserSkulls(event.getMessage().getMentionedMembers().get(0).getUser()
+                                            .getId(), userSkulls + parsed);
 
-                                embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                        .setTitle("Skulls given.")
-                                        .setDescription("Successfully given " + event.getMessage().getMentionedMembers()
-                                                .get(0).getUser().getAsMention() + " " + parsed + " skulls.");
+                                    embedBuilder = CommonEmbeds.successEmbed("Skulls Given",
+                                            "Successfully given " + event.getMessage().getMentionedMembers().get(0)
+                                                    .getUser().getAsMention() + " " + parsed + " skulls.",
+                                            "Emptying out the skulls you had in your closet, huh?",
+                                            event.getAuthor().getAvatarUrl());
+                                }
                             }
-                            else
+                            catch (NumberFormatException e)
                             {
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Insufficient permissions.")
-                                        .setDescription("The 'giveSkulls' command requires administrator permissions.");
+                                embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                                        "The **giveSkulls** command takes exactly **2** arguments, the second of which " +
+                                                "**must** be a non-negative number.\n\n" +
+                                        "**Usage:**\n" +
+                                                "```• " + DeathRollMain.getPrefix() + "giveSkulls [@player] " +
+                                                "[skull amount]```",
+                                        event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                             }
                         }
-                        catch (NumberFormatException e)
+                        else
                         {
-                            embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                    .setTitle("Incorrect number of arguments!")
-                                    .setDescription("The 'giveSkulls' command takes exactly 2 arguments." +
-                                            "\nUsage: " + DeathRollMain.getPrefix()
-                                            + "giveSkulls [@player] [skull amount]");
+                            embedBuilder = CommonEmbeds.errorEmbed("Insufficient Permissions",
+                                    "The **giveSkulls** command requires administrator permissions.",
+                                    event.getAuthor().getName(), "I see you trying to cheat...",
+                                    event.getAuthor().getAvatarUrl());
                         }
                     }
                     else
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("User not registered!")
-                                .setDescription("To use the 'giveSkulls' command, you must be registered." +
-                                        "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
+                        embedBuilder = CommonEmbeds.errorEmbed("Non-Registered User",
+                                "To use the **giveSkulls** command, you must be registered." +
+                                        "\nTo do so, run the `" + DeathRollMain.getPrefix() + "register` command.",
+                                event.getAuthor().getName(), "Come register, we have cookies!" ,
+                                event.getAuthor().getAvatarUrl());
                     }
                 }
                 event.getChannel().sendMessage(embedBuilder.build()).queue();

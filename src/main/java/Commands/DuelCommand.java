@@ -1,5 +1,6 @@
 package Commands;
 
+import Common.CommonEmbeds;
 import Database.SQLiteConnection;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -18,11 +19,11 @@ import java.awt.*;
  *     <li> Usable by: Registered users.
  *     <li> Alias: Duel, d.
  *     <li> Arguments: A user mention (obligatory), a positive numeric bet value (obligatory).
- *     <li> Purpose: Challenge another user to a ranked duel.
+ *     <li> Purpose: Challenges another user to a ranked duel.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class DuelCommand extends ListenerAdapter
@@ -58,14 +59,15 @@ public class DuelCommand extends ListenerAdapter
             if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "duel")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "d"))
             {
-                EmbedBuilder embedBuilder = new EmbedBuilder();
+                EmbedBuilder embedBuilder;
 
                 if (messageText.length != 3)
                 {
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'duel' command takes exactly 2 arguments."
-                                    + "\nUsage: " + DeathRollMain.getPrefix() + "duel [@player] [bet amount]");
+                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                            "The **duel** command takes exactly **2** arguments.\n\n" +
+                            "**Usage:**\n" +
+                                    "```• " + DeathRollMain.getPrefix() + "duel [@player] [bet amount]```",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 }
                 else
                 {
@@ -73,50 +75,54 @@ public class DuelCommand extends ListenerAdapter
                     {
                         if (SQLiteConnection.isUserRequestingDuel(event.getAuthor().getId()))
                         {
-                            embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                    .setTitle("Invalid Challenge!")
-                                    .setDescription("User " + event.getAuthor().getAsMention() + " currently has a " +
-                                            "pending challenge!");
+                            embedBuilder = CommonEmbeds.errorEmbed("Invalid Challenge",
+                                    "User " + event.getAuthor().getAsMention() + " currently has a pending challenge.",
+                                    event.getAuthor().getName(), "Stop being so impatient...",
+                                    event.getAuthor().getAvatarUrl());
                         }
                         else if (SQLiteConnection.isUserInDuel(event.getAuthor().getId()))
                         {
-                            embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                    .setTitle("Invalid Challenge!")
-                                    .setDescription("User " + event.getAuthor().getAsMention() + " is already in a " +
-                                            "duel!");
+                            embedBuilder = CommonEmbeds.errorEmbed("Invalid Challenge",
+                                    "User " + event.getAuthor().getAsMention() + " is already in a duel!",
+                                    event.getAuthor().getName(), "You can wait for your turn to lose.",
+                                    event.getAuthor().getAvatarUrl());
                         }
                         else
                         {
                             if (event.getMessage().getMentionedMembers().size() != 1)
                             {
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Incorrect arguments!")
-                                        .setDescription("The 'duel' command takes exactly 2 arguments, the first of " +
-                                                "which MUST be a player mention." + "\nUsage: "
-                                                + DeathRollMain.getPrefix() + "duel [@player] [bet amount]");
+                                embedBuilder = CommonEmbeds.errorEmbed("Invalid Arguments",
+                                        "The **duel** command takes exactly **2** arguments, the first of which " +
+                                                "**must** be a player mention.\n\n" +
+                                        "**Usage:**\n" +
+                                                "```• " + DeathRollMain.getPrefix() + "duel [@player] [bet amount]```",
+                                        event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                             }
                             else
                             {
                                 if (event.getMessage().getMentionedMembers().get(0).getUser().isBot())
                                 {
-                                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                            .setTitle("Invalid Challenge:")
-                                            .setDescription("You can not challenge a bot to a duel!");
+                                    embedBuilder = CommonEmbeds.errorEmbed("Invalid Challenge",
+                                            "You cannot challenge a bot user to a duel.",
+                                            event.getAuthor().getName(), "No bullying bot users!",
+                                            event.getAuthor().getAvatarUrl());
                                 }
                                 else if (event.getMessage().getMentionedMembers().get(0).getId()
                                         .equals(event.getAuthor().getId()))
                                 {
-                                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                            .setTitle("Invalid Challenge:")
-                                            .setDescription("You can not challenge yourself to a duel!");
+                                    embedBuilder = CommonEmbeds.errorEmbed("Invalid Challenge",
+                                            "You cannot challenge yourself to a duel.",
+                                            event.getAuthor().getName(), "Stop hitting yourself!" ,
+                                            event.getAuthor().getAvatarUrl());
                                 }
                                 else if (SQLiteConnection.isUserInDuel(event.getMessage().getMentionedMembers().get(0)
                                         .getId()))
                                 {
-                                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                            .setTitle("Invalid Challenge:")
-                                            .setDescription("User " + event.getMessage().getMentionedMembers().get(0)
-                                                    .getAsMention() + " is already in a duel!");
+                                    embedBuilder = CommonEmbeds.errorEmbed("Invalid Challenge",
+                                            "User " + event.getMessage().getMentionedMembers().get(0).getAsMention() +
+                                                    " is already in a duel.",
+                                            event.getAuthor().getName(), "You can wait for your turn to lose.",
+                                            event.getAuthor().getAvatarUrl());
                                 }
                                 else
                                 {
@@ -126,10 +132,9 @@ public class DuelCommand extends ListenerAdapter
 
                                         if (parsed <= 0)
                                         {
-                                            embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                                    .setTitle("Incorrect argument value!")
-                                                    .setDescription("The 'bet amount' argument must be a positive " +
-                                                            "value.");
+                                            embedBuilder = CommonEmbeds.errorEmbed("Invalid Argument",
+                                                    "The **bet amount** argument must be a positive value.",
+                                                    event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                                         }
                                         else
                                         {
@@ -137,20 +142,20 @@ public class DuelCommand extends ListenerAdapter
 
                                             if (parsed > userSkulls)
                                             {
-                                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                                        .setTitle("Not enough skulls to bet!")
-                                                        .setDescription("User " + event.getAuthor().getAsMention()
-                                                                + " currently has " + userSkulls + " skulls.");
+                                                embedBuilder = CommonEmbeds.errorEmbed("Insufficient Skulls",
+                                                        "User " + event.getAuthor().getAsMention() + " currently has " +
+                                                                userSkulls + " skulls.",
+                                                        event.getAuthor().getName(), "Your pockets seem a bit... " +
+                                                                "\"Light\", don't they?",
+                                                        event.getAuthor().getAvatarUrl());
                                             }
                                             else
                                             {
-                                                embedBuilder.setColor(DeathRollMain.EMBED_NEUTRAL)
-                                                        .setTitle("Duel request:")
-                                                        .setDescription("Hello " + event.getMessage()
-                                                                .getMentionedMembers().get(0).getAsMention()
-                                                                + ", you have been challenged to a duel by "
-                                                                + event.getAuthor().getAsMention() + "!"
-                                                                + "\nBet amount: " + parsed + "\nDo you accept?");
+                                                embedBuilder = CommonEmbeds.activeReactEmbed("Duel Request",
+                                                        "Hello " + event.getMessage().getMentionedMembers().get(0)
+                                                        .getAsMention() + ", you have been challenged to a duel by " +
+                                                        event.getAuthor().getAsMention() + "!" + "\nBet amount: " +
+                                                        parsed + "\nDo you accept?");
 
                                                 SQLiteConnection.setUserRequestingDuelState(event.getAuthor().getId(),
                                                         1);
@@ -159,11 +164,12 @@ public class DuelCommand extends ListenerAdapter
                                     }
                                     catch (NumberFormatException e)
                                     {
-                                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                                .setTitle("Incorrect argument value!")
-                                                .setDescription("The 'duel' command takes exactly 2 arguments."
-                                                        + "\nUsage: " + DeathRollMain.getPrefix() + "duel [@player] "
-                                                        + "[bet amount]");
+                                        embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                                                "The **duel** command takes exactly **2** arguments.\n\n" +
+                                                        "**Usage:**\n" +
+                                                        "```• " + DeathRollMain.getPrefix() + "duel [@player] " +
+                                                        "[bet amount]```",
+                                                event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                                     }
                                 }
                             }
@@ -171,10 +177,11 @@ public class DuelCommand extends ListenerAdapter
                     }
                     else
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("User not registered!")
-                                .setDescription("To use the 'duel' command, you must be registered." +
-                                        "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
+                        embedBuilder = CommonEmbeds.errorEmbed("Non-Registered User",
+                                "To use the **duel** command, you must be registered." +
+                                        "\nTo do so, run the `" + DeathRollMain.getPrefix() + "register` command.",
+                                event.getAuthor().getName(), "Come register, we have cookies!",
+                                event.getAuthor().getAvatarUrl());
                     }
                 }
                 event.getChannel().sendMessage(embedBuilder.build()).queue();
@@ -182,24 +189,25 @@ public class DuelCommand extends ListenerAdapter
         }
         else
         {
+            // TODO: GENERALIZE FOR OTHER BOTS (asking for bot ID on the form)
             if (event.getAuthor().getId().equals("731819691479269426")
                 || event.getAuthor().getId().equals("743881549392511027"))
             {
                 if (event.getMessage().getEmbeds().size() != 1)
                 {
-                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    EmbedBuilder embedBuilder;
 
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Unexpected Error!")
-                            .setDescription("Target message either composed by multiple embeds or none." +
-                                    "\nPlease contact a bot developer.");
+                    embedBuilder = CommonEmbeds.errorEmbed("Unexpected Error",
+                            "Target message either composed by multiple embeds or none.\nPlease contact a bot " +
+                                    "developer.",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
 
                     event.getChannel().sendMessage(embedBuilder.build()).queue();
                 }
                 else
                 {
                     String title = event.getMessage().getEmbeds().get(0).getTitle();
-                    if (title != null && title.equals("Duel request:"))
+                    if (title != null && title.equals("Duel Request"))
                     {
                         event.getMessage().addReaction("✅").queue();
                         event.getMessage().addReaction("❌").queue();
@@ -242,18 +250,17 @@ public class DuelCommand extends ListenerAdapter
             {
                 e.printStackTrace();
 
-                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                        .setTitle("Unexpected Error!")
-                        .setDescription("Unable to fetch embed color!" +
-                                "\nPlease contact a bot developer.");
+                embedBuilder = CommonEmbeds.errorEmbed("Unexpected Error",
+                        "Unable to fetch embed color!\nPlease contact a bot developer.",
+                        event.getUser().getName(), event.getUser().getAvatarUrl());
 
                 event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
 
-            if (message.getEmbeds().size() == 1 && color != null && color.getRGB() == new Color(0,0,0).getRGB())
+            if (message.getEmbeds().size() == 1 && color != null && color.getRGB() == CommonEmbeds.ACTIVE_EMBED_INT)
             {
                 MessageEmbed messageEmbed = message.getEmbeds().get(0);
-                if (messageEmbed.getTitle() != null && messageEmbed.getTitle().equals("Duel request:"))
+                if (messageEmbed.getTitle() != null && messageEmbed.getTitle().equals("Duel Request"))
                 {
                     if(messageEmbed.getDescription() != null)
                     {
@@ -278,10 +285,9 @@ public class DuelCommand extends ListenerAdapter
                                 }
                                 catch (NumberFormatException e)
                                 {
-                                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                            .setTitle("Unexpected Error!")
-                                            .setDescription("Incorrect bet amount." +
-                                                    "\nPlease contact a bot developer.");
+                                    embedBuilder = CommonEmbeds.errorEmbed("Unexpected Error",
+                                            "Incorrect bet amount.\nPlease contact a bot developer.",
+                                            event.getUser().getName(), event.getUser().getAvatarUrl());
 
                                     event.getChannel().sendMessage(embedBuilder.build()).queue();
                                 }
@@ -291,10 +297,10 @@ public class DuelCommand extends ListenerAdapter
                                     int userSkulls = SQLiteConnection.getUserSkulls(event.getUserId());
                                     if (userSkulls < parsedBet)
                                     {
-                                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                                .setTitle("Not enough skulls to accept duel!")
-                                                .setDescription("User " + event.getUser().getAsMention()
-                                                        + " currently has " + userSkulls + " skulls.");
+                                        embedBuilder = CommonEmbeds.errorEmbed("Insufficient Skulls",
+                                                "User " + event.getUser().getAsMention() + " currently has " +
+                                                        userSkulls + " skulls.",
+                                                event.getUser().getName(), event.getUser().getAvatarUrl());
 
                                         SQLiteConnection.setUserRequestingDuelState(challenging, 0);
                                         event.getChannel().sendMessage(embedBuilder.build()).queue();
@@ -304,11 +310,11 @@ public class DuelCommand extends ListenerAdapter
                                     {
                                         if (SQLiteConnection.isUserInDuel(challenged))
                                         {
-                                            embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                                    .setTitle("Could not accept challenge!")
-                                                    .setDescription("User "
-                                                            + event.getJDA().retrieveUserById(challenged).complete()
-                                                            .getAsMention() + " is already in a duel!");
+                                            embedBuilder = CommonEmbeds.errorEmbed("Failed Duel Request",
+                                                    "User " + event.getJDA().retrieveUserById(challenged).complete()
+                                                            .getAsMention() + " is already in a duel!",
+                                                    event.getUser().getName(), "You can work for your turn to lose.",
+                                                    event.getUser().getAvatarUrl());
 
                                             SQLiteConnection.setUserRequestingDuelState(challenging, 0);
 
@@ -320,19 +326,18 @@ public class DuelCommand extends ListenerAdapter
                                             {
                                                 embedBuilder.setTitle(embed.getTitle())
                                                         .setDescription(embed.getDescription())
-                                                        .setColor(DeathRollMain.EMBED_SUCCESS)
+                                                        .setColor(CommonEmbeds.EMBED_SUCCESS)
                                                         .build();
 
                                                 message.editMessage(embedBuilder.build()).complete();
 
-                                                embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                                        .setTitle("Challenge accepted!")
-                                                        .setDescription("User "
-                                                                + event.getJDA().retrieveUserById(challenged).complete()
-                                                                .getAsMention() + " has accepted "
-                                                                + event.getJDA().retrieveUserById(challenging)
-                                                                .complete().getAsMention() + "'s duel challenge and " +
-                                                                "takes the first turn!");
+                                                embedBuilder = CommonEmbeds.successEmbed("Challenge Accepted",
+                                                        "User " + event.getJDA().retrieveUserById(challenged).complete()
+                                                        .getAsMention() + " has accepted " + event.getJDA()
+                                                        .retrieveUserById(challenging).complete().getAsMention() +
+                                                        "'s duel challenge and takes the first turn!",
+                                                        "Good luck, " + event.getUser().getName() + "!",
+                                                        event.getUser().getAvatarUrl());
 
                                                 SQLiteConnection.updateUserDuelStarted(challenged, challenging,
                                                         parsedBet, true);
@@ -345,18 +350,19 @@ public class DuelCommand extends ListenerAdapter
                                             {
                                                 embedBuilder.setTitle(embed.getTitle())
                                                         .setDescription(embed.getDescription())
-                                                        .setColor(DeathRollMain.EMBED_FAILURE)
+                                                        .setColor(CommonEmbeds.EMBED_FAILURE)
                                                         .build();
 
                                                 message.editMessage(embedBuilder.build()).complete();
 
-                                                embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                                        .setTitle("Challenge declined!")
-                                                        .setDescription("User "
-                                                                + event.getJDA().retrieveUserById(challenged).complete()
-                                                                .getAsMention() + " has declined "
-                                                                + event.getJDA().retrieveUserById(challenging)
-                                                                .complete().getAsMention() + "'s duel challenge!");
+                                                embedBuilder = CommonEmbeds.successEmbed("Challenge Declined",
+                                                        "User " + event.getJDA().retrieveUserById(challenged).complete()
+                                                        .getAsMention() + " has declined " + event.getJDA()
+                                                        .retrieveUserById(challenging).complete().getAsMention() +
+                                                        "'s duel challenge!", "Hey, " + event.getJDA()
+                                                        .retrieveUserById(challenging).complete().getName() +
+                                                        "! How does it feel to get friend-zoned by " + event.getUser()
+                                                        .getName() + "?", event.getUser().getAvatarUrl());
 
                                                 SQLiteConnection.setUserRequestingDuelState(challenging, 0);
 
@@ -370,16 +376,16 @@ public class DuelCommand extends ListenerAdapter
                             {
                                 embedBuilder.setTitle(embed.getTitle())
                                         .setDescription(embed.getDescription())
-                                        .setColor(DeathRollMain.EMBED_FAILURE)
+                                        .setColor(CommonEmbeds.EMBED_FAILURE)
                                         .build();
 
                                 message.editMessage(embedBuilder.build()).complete();
 
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("User not registered!")
-                                        .setDescription("To accept a duel or deny, you must be registered." +
-                                                "\nTo do so, run the "
-                                                + DeathRollMain.getPrefix() + "register command.");
+                                embedBuilder = CommonEmbeds.errorEmbed("Non-Registered User",
+                                        "To accept or decline a duel, you must be registered.\nTo do so, run the `" +
+                                                DeathRollMain.getPrefix() + "register` command.",
+                                        event.getUser().getName(), "Come register, we have cookies!" ,
+                                        event.getUser().getAvatarUrl());
 
                                 SQLiteConnection.setUserRequestingDuelState(challenging, 0);
 
@@ -396,18 +402,17 @@ public class DuelCommand extends ListenerAdapter
                                 {
                                     embedBuilder.setTitle(embed.getTitle())
                                             .setDescription(embed.getDescription())
-                                            .setColor(DeathRollMain.EMBED_FAILURE)
+                                            .setColor(CommonEmbeds.EMBED_FAILURE)
                                             .build();
 
                                     message.editMessage(embedBuilder.build()).complete();
 
-                                    embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                            .setTitle("Challenge canceled!")
-                                            .setDescription("User "
-                                                    + event.getJDA().retrieveUserById(challenging).complete()
-                                                    .getAsMention() + " has canceled their duel request to "
-                                                    + event.getJDA().retrieveUserById(challenged)
-                                                    .complete().getAsMention() + "!");
+                                    embedBuilder = CommonEmbeds.successEmbed("Challenge Canceled",
+                                            "User " + event.getJDA().retrieveUserById(challenging).complete()
+                                            .getAsMention() + " has canceled their duel request to " + event.getJDA()
+                                            .retrieveUserById(challenged).complete().getAsMention() + "!",
+                                            "So " + event.getUser().getName() + ", I see you've regretted your " +
+                                            "decisions?", event.getUser().getAvatarUrl());
 
                                     SQLiteConnection.setUserRequestingDuelState(challenging, 0);
 
@@ -418,16 +423,16 @@ public class DuelCommand extends ListenerAdapter
                             {
                                 embedBuilder.setTitle(embed.getTitle())
                                         .setDescription(embed.getDescription())
-                                        .setColor(DeathRollMain.EMBED_FAILURE)
+                                        .setColor(CommonEmbeds.EMBED_FAILURE)
                                         .build();
 
                                 message.editMessage(embedBuilder.build()).complete();
 
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("User not registered!")
-                                        .setDescription("To cancel a duel request, you must be registered." +
-                                                "\nTo do so, run the "
-                                                + DeathRollMain.getPrefix() + "register command.");
+                                embedBuilder = CommonEmbeds.errorEmbed("Non-Registered User",
+                                        "To cancel a duel request, you must be registered.\nTo do so, run the `" +
+                                                DeathRollMain.getPrefix() + "register` command.",
+                                        event.getUser().getName(), "Come register, we have cookies!" ,
+                                        event.getUser().getAvatarUrl());
 
                                 SQLiteConnection.setUserRequestingDuelState(challenging, 0);
 

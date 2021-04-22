@@ -1,5 +1,6 @@
 package Commands;
 
+import Common.CommonEmbeds;
 import Database.SQLiteConnection;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -18,7 +19,7 @@ import javax.annotation.Nonnull;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class SkullsCommand extends ListenerAdapter
@@ -41,17 +42,18 @@ public class SkullsCommand extends ListenerAdapter
         if (!event.getAuthor().isBot())
         {
             String[] messageText = event.getMessage().getContentRaw().split("\\s+");
-            EmbedBuilder embedBuilder = new EmbedBuilder();
+            EmbedBuilder embedBuilder;
 
             if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "skulls")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "sk"))
             {
                 if(messageText.length != 1)
                 {
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'skulls' command takes no arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "skulls");
+                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                            "The **skulls** command takes **no** arguments.\n\n" +
+                                    "**Usage:**\n" +
+                                    "```• " + DeathRollMain.getPrefix() + "skulls```",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 }
                 else
                 {
@@ -59,17 +61,18 @@ public class SkullsCommand extends ListenerAdapter
                     {
                         int userSkulls = SQLiteConnection.getUserSkulls(event.getAuthor().getId());
 
-                        embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                .setTitle("Current Skulls:")
-                                .setDescription("User " + event.getAuthor().getAsMention() + " has " + userSkulls +
-                                        " skulls.");
+                        embedBuilder = CommonEmbeds.successEmbed("Current Skulls",
+                                "User " + event.getAuthor().getAsMention() + " has **" + userSkulls +
+                                        "** skulls.", "Oh, " + event.getAuthor().getName() + ", what a fortune!",
+                                event.getAuthor().getAvatarUrl());
                     }
                     else
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("User not registered!")
-                                .setDescription("To use the 'skulls' command, you must be registered." +
-                                        "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
+                        embedBuilder = CommonEmbeds.errorEmbed("Non-Registered User",
+                                "To use the **skulls** command, you must be registered." +
+                                        "\nTo do so, run the `" + DeathRollMain.getPrefix() + "register` command.",
+                                event.getAuthor().getName(), "Come register, we have cookies!" ,
+                                event.getAuthor().getAvatarUrl());
                     }
                 }
                 event.getChannel().sendMessage(embedBuilder.build()).queue();

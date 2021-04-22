@@ -1,5 +1,6 @@
 package Commands;
 
+import Common.CommonEmbeds;
 import Database.SQLiteConnection;
 import Database.UserStats;
 import Main.DeathRollMain;
@@ -15,11 +16,11 @@ import javax.annotation.Nonnull;
  *     <li> Usable by: Registered users who are currently in a duel, given it is their turn to do so.
  *     <li> Alias: Roll, rr.
  *     <li> Arguments: None.
- *     <li> Purpose: Roll a random number up to the previously rolled value (or to 10x the bid value if the first roll).
+ *     <li> Purpose: Rolls a random number up to a previously rolled value (or to 10x the bid value if the first roll).
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class RankedRollCommand extends ListenerAdapter
@@ -49,14 +50,15 @@ public class RankedRollCommand extends ListenerAdapter
             if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "roll")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "rr"))
             {
-                EmbedBuilder embedBuilder = new EmbedBuilder();
+                EmbedBuilder embedBuilder;
 
                 if(messageText.length != 1)
                 {
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'roll' command takes no arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "roll");
+                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                            "The **roll** command takes **no** arguments.\n\n" +
+                            "**Usage:**\n" +
+                                    "```• " + DeathRollMain.getPrefix() + "roll```",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 }
                 else
                 {
@@ -68,25 +70,23 @@ public class RankedRollCommand extends ListenerAdapter
 
                             if (nextRoll < 2)
                             {
-                                embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                        .setTitle("Unexpected error!")
-                                        .setDescription("Invalid next roll value." +
-                                                "\nPlease contact a bot developer.");
+                                embedBuilder = CommonEmbeds.errorEmbed("Unexpected Error",
+                                        "Invalid next roll value.\nPlease contact a bot developer.",
+                                        event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                             }
                             else
                             {
                                 if (SQLiteConnection.IsRollTurn(event.getAuthor().getId()))
                                 {
                                     int rand = DeathRollMain.getRandom().nextInt(nextRoll) + 1;
+                                    String duelPartner = SQLiteConnection.getDuelPartner(event.getAuthor().getId());
 
                                     if (rand > 1)
                                     {
-                                        embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                                .setTitle("Value rolled:")
-                                                .setDescription("User " + event.getAuthor().getAsMention()
-                                                        + " just rolled a " + rand + "!");
-
-                                        String duelPartner = SQLiteConnection.getDuelPartner(event.getAuthor().getId());
+                                        embedBuilder = CommonEmbeds.rankedRollEmbed(false, "Value Rolled", "User " +
+                                                event.getAuthor().getAsMention() + " just rolled a **" + rand + "**!",
+                                                event.getAuthor().getName(), event.getAuthor().getAvatarUrl(),
+                                                event.getJDA().retrieveUserById(duelPartner).complete().getName());
 
                                         SQLiteConnection.setNextRoll(event.getAuthor().getId(), rand);
                                         SQLiteConnection.setNextRoll(duelPartner, rand);
@@ -95,13 +95,12 @@ public class RankedRollCommand extends ListenerAdapter
                                     }
                                     else
                                     {
-                                        embedBuilder.setColor(DeathRollMain.EMBED_NEUTRAL)
-                                                .setTitle("DEATH ROLL:")
-                                                .setDescription("User " + event.getAuthor().getAsMention()
-                                                        + " just rolled a " + rand + "!");
+                                        embedBuilder = CommonEmbeds.rankedRollEmbed(true, "DEATHROLL", "User " +
+                                                event.getAuthor().getAsMention() + " just rolled a **" + rand + "**!",
+                                                event.getAuthor().getName(), event.getAuthor().getAvatarUrl(),
+                                                event.getJDA().retrieveUserById(duelPartner).complete().getName());
 
                                         int currentBet = SQLiteConnection.getCurrentBet(event.getAuthor().getId());
-                                        String duelPartner = SQLiteConnection.getDuelPartner(event.getAuthor().getId());
 
                                         int userSkulls = SQLiteConnection.getUserSkulls(event.getAuthor().getId());
                                         int opponentSkulls = SQLiteConnection.getUserSkulls(duelPartner);
@@ -131,28 +130,29 @@ public class RankedRollCommand extends ListenerAdapter
                                 {
                                     String partner = SQLiteConnection.getDuelPartner(event.getAuthor().getId());
 
-                                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                            .setTitle("Incorrect turn!")
-                                            .setDescription(event.getAuthor().getAsMention() + ", it is currently " +
+                                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Turn",
+                                            event.getAuthor().getAsMention() + ", it is currently " +
                                                     event.getJDA().retrieveUserById(partner).complete().getAsMention() +
-                                                    "'s turn to roll!");
+                                                    "'s turn to roll!",
+                                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                                 }
                             }
                         }
                         else
                         {
-                            embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                    .setTitle("Not currently in a duel!")
-                                    .setDescription("User " + event.getAuthor().getAsMention() + " is not currently" +
-                                            " in a duel.\nTo begin one, use the 'duel' command.");
+                            embedBuilder = CommonEmbeds.errorEmbed("Non-existing Duel",
+                                    "User " + event.getAuthor().getAsMention() + " is not currently in a duel.\nTo " +
+                                            "begin one, use the **duel** command.",
+                                    event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                         }
                     }
                     else
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("User not registered!")
-                                .setDescription("To use the 'roll' command, you must be registered." +
-                                        "\nTo do so, run the " + DeathRollMain.getPrefix() + "register command.");
+                        embedBuilder = CommonEmbeds.errorEmbed("Non-Registered User",
+                                "To use the **roll** command, you must be registered." +
+                                        "\nTo do so, run the `" + DeathRollMain.getPrefix() + "register` command.",
+                                event.getAuthor().getName(), "Come register, we have cookies!",
+                                event.getAuthor().getAvatarUrl());
                     }
                 }
                 event.getChannel().sendMessage(embedBuilder.build()).queue();

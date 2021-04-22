@@ -16,7 +16,7 @@ import java.util.Random;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class DeathRollMain
@@ -33,21 +33,6 @@ public class DeathRollMain
      * The skulls value attributed to newly registering players.
      */
     private static int baseSkulls = -1;
-    /**
-     * Numeric value that represents a shade of Green.
-     * Used for successful embed operations.
-     */
-    public static final int EMBED_SUCCESS = 0x19ed0e;
-    /**
-     * Numeric value that represents a shade of Red.
-     * Used for failed embed operations.
-     */
-    public static final int EMBED_FAILURE = 0xe50b0e;
-    /**
-     * Numeric value that represents a shade of Black.
-     * Used for informational and query embeds.
-     */
-    public static final int EMBED_NEUTRAL = 0x000000;
     /**
      *  This class's Random class instantiation.
      */

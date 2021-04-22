@@ -1,5 +1,6 @@
 package Commands;
 
+import Common.CommonEmbeds;
 import Main.DeathRollMain;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -13,11 +14,11 @@ import javax.annotation.Nonnull;
  *     <li> Usable by: Any user.
  *     <li> Alias: Froll, fr.
  *     <li> Arguments: A numeric value greater than 1 (obligatory).
- *     <li> Purpose: Roll a random number up to the value of the given argument.
+ *     <li> Purpose: Rolls a random number up to the value of the given argument.
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class FreeRollCommand extends ListenerAdapter
@@ -44,17 +45,19 @@ public class FreeRollCommand extends ListenerAdapter
             if (messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "froll")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "fr"))
             {
-                EmbedBuilder embedBuilder = new EmbedBuilder();
+                EmbedBuilder embedBuilder;
 
                 if (messageText.length != 2) {
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'froll' command takes exactly 1 argument." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "froll [maximum roll value]");
+                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                            "The **freeRoll** command takes exactly **1** argument.\n\n" +
+                            "**Usage:**\n" +
+                                    "```• " + DeathRollMain.getPrefix() + "froll [maximum roll value]```",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 }
                 else
                 {
                     int parsed = 0;
+                    boolean wrongParse = false;
 
                     try
                     {
@@ -62,17 +65,22 @@ public class FreeRollCommand extends ListenerAdapter
                     }
                     catch (NumberFormatException e)
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("Incorrect argument value!")
-                                .setDescription("The 'froll' command takes exactly 1 argument." +
-                                        "\nUsage: " + DeathRollMain.getPrefix() + "froll [maximum roll value]");
+                        wrongParse = true;
                     }
 
-                    if (parsed < 2)
+                    if (wrongParse)
                     {
-                        embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                                .setTitle("Incorrect roll value!")
-                                .setDescription("Argument [maximum roll value] must have a value of 2 or greater!");
+                        embedBuilder = CommonEmbeds.errorEmbed("Invalid Argument",
+                                "The **freeRoll** command takes exactly **1** argument.\n\n" +
+                                "**Usage:**\n" +
+                                        "```• " + DeathRollMain.getPrefix() + "froll [maximum roll value]```",
+                                event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
+                    }
+                    else if (parsed < 2)
+                    {
+                        embedBuilder = CommonEmbeds.errorEmbed("Invalid Argument",
+                                "The **maximum roll value** argument must have a value of **2** or **greater**!",
+                                event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                     }
                     else
                     {
@@ -80,17 +88,15 @@ public class FreeRollCommand extends ListenerAdapter
 
                         if (rand > 1)
                         {
-                            embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS)
-                                    .setTitle("Value rolled:")
-                                    .setDescription("User " + event.getAuthor().getAsMention()
-                                            + " just rolled a " + rand + "!");
+                            embedBuilder = CommonEmbeds.freeRollEmbed(false, "Value Rolled", "User " +
+                                    event.getAuthor().getAsMention() + " just rolled a **" + rand + "**!",
+                                    event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                         }
                         else
                         {
-                            embedBuilder.setColor(DeathRollMain.EMBED_NEUTRAL)
-                                    .setTitle("DEATH ROLL:")
-                                    .setDescription("User " + event.getAuthor().getAsMention()
-                                            + " just rolled a " + rand + "!");
+                            embedBuilder = CommonEmbeds.freeRollEmbed(true, "DEATHROLL", "User " +
+                                    event.getAuthor().getAsMention() + " just rolled a **" + rand + "**!",
+                                    event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                         }
                     }
                 }

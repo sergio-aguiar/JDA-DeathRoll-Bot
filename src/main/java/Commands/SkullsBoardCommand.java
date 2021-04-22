@@ -1,5 +1,6 @@
 package Commands;
 
+import Common.CommonEmbeds;
 import Database.SQLiteConnection;
 import Database.UserSkulls;
 import Main.DeathRollMain;
@@ -8,7 +9,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * DeathRoll Command: SkullBoard.
@@ -20,7 +21,7 @@ import java.util.List;
  * </ul>
  *
  * @author Sérgio de Aguiar (pioavenger)
- * @version 1.3.2
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class SkullsBoardCommand extends ListenerAdapter
@@ -48,29 +49,24 @@ public class SkullsBoardCommand extends ListenerAdapter
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "skb")
                     || messageText[0].equalsIgnoreCase(DeathRollMain.getPrefix() + "ldb"))
             {
-                EmbedBuilder embedBuilder = new EmbedBuilder();
+                EmbedBuilder embedBuilder;
 
                 if (messageText.length != 1)
                 {
-                    embedBuilder.setColor(DeathRollMain.EMBED_FAILURE)
-                            .setTitle("Incorrect number of arguments!")
-                            .setDescription("The 'skullsboard' command takes no arguments." +
-                                    "\nUsage: " + DeathRollMain.getPrefix() + "skullsboard");
+                    embedBuilder = CommonEmbeds.errorEmbed("Incorrect Argument Number",
+                            "The **skullsboard** command takes **no** arguments.\n\n" +
+                            "**Usage:**\n" +
+                                    "```• " + DeathRollMain.getPrefix() + "skullsboard```",
+                            event.getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 }
                 else
                 {
-                    List<UserSkulls> userSkullsList = SQLiteConnection.getSkullsLeaderboard();
-                    embedBuilder.setColor(DeathRollMain.EMBED_SUCCESS).setTitle("Top 10 SkullsBoard");
+                    ArrayList<UserSkulls> userSkullsList = SQLiteConnection.getSkullsLeaderboard();
 
-                    StringBuilder skullsboard = new StringBuilder();
-                    for (UserSkulls skulls : userSkullsList)
-                    {
-                        skullsboard.append(event.getJDA().retrieveUserById(skulls.getUserID()).complete()
-                                .getAsMention()).append(" - ").append(skulls.getSkulls()).append("\n");
-                    }
-                    embedBuilder.setDescription(skullsboard.toString());
-                    event.getChannel().sendMessage(embedBuilder.build()).queue();
+                    embedBuilder = CommonEmbeds.skullsBoardEmbed(event.getJDA(), event.getAuthor().getAsTag(),
+                            event.getAuthor().getAvatarUrl(), userSkullsList);
                 }
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
         }
     }
